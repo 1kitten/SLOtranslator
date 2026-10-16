@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SloDvojina — Slovenska dvojina & slovar</title>
+  <title>Dvojček — Slovenska dvojina & prevajalnik</title>
+  <link rel="icon" type="image/jpeg" href="/mascot.jpg">
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
@@ -59,11 +60,14 @@
   <header class="bg-white dark:bg-[#121215] border-b border-zinc-200 dark:border-zinc-800 sticky top-0 z-40">
     <div class="max-w-4xl mx-auto px-4 py-2.5 flex justify-between items-center">
       <div class="flex items-center space-x-2.5 cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-        <div class="w-7 h-7 rounded border border-zinc-900 dark:border-zinc-100 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center font-mono text-xs font-bold tracking-tight">
-          SL
+        <div class="w-8 h-8 rounded-full border border-zinc-200 dark:border-zinc-800 overflow-hidden bg-emerald-50 dark:bg-emerald-950/40 flex-shrink-0 shadow-xs ring-1 ring-zinc-200/50 dark:ring-zinc-800">
+          <img src="/mascot.jpg" alt="Dvojček" class="w-full h-full object-cover scale-110 object-top" />
         </div>
         <div class="flex items-baseline gap-2">
-          <h1 class="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-100" id="app-brand-name">SloDvojina</h1>
+          <h1 class="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5" id="app-brand-name">
+            Dvojček
+            <span class="text-[10px] font-normal px-1.5 py-0.2 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60 font-mono">zmajček</span>
+          </h1>
           <span class="text-[11px] text-zinc-400 font-normal hidden sm:inline" id="header-subtitle">Generator dvojine & prevajalnik</span>
         </div>
       </div>
@@ -71,8 +75,10 @@
       <div class="flex items-center gap-2">
         <!-- Language Switcher Pill -->
         <button id="lang-picker-btn" onclick="openLangModal()" 
-          class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-zinc-50 dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-800 transition-colors text-xs font-medium text-zinc-700 dark:text-zinc-300">
-          <span id="current-lang-flag" class="font-mono text-[10px] font-bold text-zinc-500 uppercase">SR</span>
+          class="flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-zinc-50 dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-800 transition-colors text-xs font-medium text-zinc-700 dark:text-zinc-300">
+          <span id="current-lang-flag" class="flex items-center">
+            <img src="https://flagcdn.com/w40/rs.png" class="w-4 h-3 object-cover rounded-xs border border-zinc-200 dark:border-zinc-700 shadow-xs" alt="RS" />
+          </span>
           <span id="current-lang-name">Srpski</span>
           <i class="fa-solid fa-chevron-down text-[9px] text-zinc-400 ml-0.5"></i>
         </button>
@@ -94,24 +100,36 @@
       <!-- Direction Status Bar -->
       <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800/80 pb-2.5">
         <div class="inline-flex items-center gap-2 text-xs font-medium text-zinc-600 dark:text-zinc-400">
-          <span id="dir-from-badge" class="flex items-center gap-1">
-            <span id="dir-from-flag" class="font-mono text-[10px] font-semibold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">SR</span>
+          <span id="dir-from-badge" class="flex items-center gap-1.5">
+            <span id="dir-from-flag" class="flex items-center">
+              <img src="https://flagcdn.com/w40/rs.png" class="w-4 h-3 object-cover rounded-xs border border-zinc-200 dark:border-zinc-700 shadow-xs" alt="RS" />
+            </span>
             <span id="dir-from-name">Srpski</span>
           </span>
           <i class="fa-solid fa-arrow-right text-[10px] text-zinc-400"></i>
-          <span class="flex items-center gap-1 font-semibold text-zinc-900 dark:text-zinc-100">
-            <span class="font-mono text-[10px] font-semibold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">SL</span>
+          <span class="flex items-center gap-1.5 font-semibold text-zinc-900 dark:text-zinc-100">
+            <span class="flex items-center">
+              <img src="https://flagcdn.com/w40/si.png" class="w-4 h-3 object-cover rounded-xs border border-zinc-200 dark:border-zinc-700 shadow-xs" alt="SI" />
+            </span>
             <span>Slovenščina</span>
           </span>
         </div>
         <span class="text-[11px] text-zinc-400 font-mono" id="dir-auto-tag">Samodejno zaznavanje</span>
       </div>
 
-      <div class="space-y-0.5">
-        <h2 class="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-100" id="search-title">Poišči besedo ali cel stavek</h2>
-        <p class="text-xs text-zinc-500 dark:text-zinc-400" id="search-desc">
-          Vpiši slovensko besedo, besedo v tvojem jeziku ali celoten stavek.
-        </p>
+      <div class="flex items-center gap-3.5 p-3 rounded-lg bg-zinc-50/80 dark:bg-zinc-900/60 border border-zinc-200/70 dark:border-zinc-800">
+        <div class="w-12 h-12 rounded-full overflow-hidden border border-emerald-300 dark:border-emerald-800/80 bg-emerald-50 dark:bg-emerald-950 flex-shrink-0 shadow-xs ring-1 ring-emerald-200/50 dark:ring-emerald-900/50">
+          <img src="/mascot.jpg" alt="Dvojček" class="w-full h-full object-cover scale-110 object-top" />
+        </div>
+        <div class="flex-1 min-w-0 space-y-0.5">
+          <div class="flex items-center gap-2 flex-wrap">
+            <h2 class="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-100" id="search-title">Poišči besedo ali cel stavek</h2>
+            <span class="text-[10px] font-medium px-1.5 py-0.2 rounded bg-emerald-100/80 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/70 font-mono">Dvojček pomočnik</span>
+          </div>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400" id="search-desc">
+            Vpiši slovensko besedo, besedo v tvojem jeziku ali celoten stavek.
+          </p>
+        </div>
       </div>
 
       <!-- Search Input + Action -->
@@ -465,13 +483,20 @@
       <!-- Interactive Dual Practice Card (Soft Diacritic Tolerance & Character Diff) -->
       <div id="practice-card" class="bg-white dark:bg-[#121215] rounded-lg p-4 sm:p-5 border border-zinc-200 dark:border-zinc-800 space-y-3">
         <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-2.5">
-          <div class="flex items-center gap-2">
-            <span class="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 uppercase" id="practice-badge">Vaja</span>
-            <h3 class="text-xs sm:text-sm font-semibold text-zinc-900 dark:text-zinc-100" id="practice-title">
-              Vadi dvojino za to besedo
-            </h3>
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-full overflow-hidden border border-emerald-300 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950 flex-shrink-0 shadow-xs ring-1 ring-emerald-200/50 dark:ring-emerald-900/50">
+              <img src="/mascot.jpg" alt="Dvojček" class="w-full h-full object-cover scale-110 object-top" />
+            </div>
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 uppercase" id="practice-badge">Vaja</span>
+                <h3 class="text-xs sm:text-sm font-semibold text-zinc-900 dark:text-zinc-100" id="practice-title">
+                  Vadi dvojino z Dvojčkom
+                </h3>
+              </div>
+            </div>
           </div>
-          <span class="text-[11px] text-zinc-400 font-mono" id="practice-hint">Preveri znanje dvojine</span>
+          <span class="text-[11px] text-zinc-400 font-mono hidden sm:inline" id="practice-hint">Preveri znanje dvojine</span>
         </div>
 
         <div class="space-y-2.5">
@@ -520,7 +545,7 @@
       <div class="grid grid-cols-2 gap-2 max-h-[60vh] overflow-y-auto pr-1">
         
         <button onclick="selectLanguage('sr')" class="lang-option p-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 flex items-center gap-2.5 transition-colors text-left group">
-          <span class="w-7 h-5 flex items-center justify-center font-mono text-[10px] font-bold rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">SR</span>
+          <img src="https://flagcdn.com/w40/rs.png" class="w-6 h-4 object-cover rounded-xs border border-zinc-200 dark:border-zinc-700 shadow-xs" alt="RS" />
           <div>
             <div class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Srpski</div>
             <div class="text-[10px] text-zinc-400">latinica</div>
@@ -528,7 +553,7 @@
         </button>
 
         <button onclick="selectLanguage('en')" class="lang-option p-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 flex items-center gap-2.5 transition-colors text-left group">
-          <span class="w-7 h-5 flex items-center justify-center font-mono text-[10px] font-bold rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">EN</span>
+          <img src="https://flagcdn.com/w40/gb.png" class="w-6 h-4 object-cover rounded-xs border border-zinc-200 dark:border-zinc-700 shadow-xs" alt="GB" />
           <div>
             <div class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">English</div>
             <div class="text-[10px] text-zinc-400">English</div>
@@ -536,7 +561,7 @@
         </button>
 
         <button onclick="selectLanguage('hr')" class="lang-option p-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 flex items-center gap-2.5 transition-colors text-left group">
-          <span class="w-7 h-5 flex items-center justify-center font-mono text-[10px] font-bold rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">HR</span>
+          <img src="https://flagcdn.com/w40/hr.png" class="w-6 h-4 object-cover rounded-xs border border-zinc-200 dark:border-zinc-700 shadow-xs" alt="HR" />
           <div>
             <div class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Hrvatski</div>
             <div class="text-[10px] text-zinc-400">Hrvatski</div>
@@ -544,7 +569,7 @@
         </button>
 
         <button onclick="selectLanguage('bs')" class="lang-option p-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 flex items-center gap-2.5 transition-colors text-left group">
-          <span class="w-7 h-5 flex items-center justify-center font-mono text-[10px] font-bold rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">BS</span>
+          <img src="https://flagcdn.com/w40/ba.png" class="w-6 h-4 object-cover rounded-xs border border-zinc-200 dark:border-zinc-700 shadow-xs" alt="BA" />
           <div>
             <div class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Bosanski</div>
             <div class="text-[10px] text-zinc-400">Bosanski</div>
@@ -552,7 +577,7 @@
         </button>
 
         <button onclick="selectLanguage('de')" class="lang-option p-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 flex items-center gap-2.5 transition-colors text-left group">
-          <span class="w-7 h-5 flex items-center justify-center font-mono text-[10px] font-bold rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">DE</span>
+          <img src="https://flagcdn.com/w40/de.png" class="w-6 h-4 object-cover rounded-xs border border-zinc-200 dark:border-zinc-700 shadow-xs" alt="DE" />
           <div>
             <div class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Deutsch</div>
             <div class="text-[10px] text-zinc-400">Deutsch</div>
@@ -560,7 +585,7 @@
         </button>
 
         <button onclick="selectLanguage('it')" class="lang-option p-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 flex items-center gap-2.5 transition-colors text-left group">
-          <span class="w-7 h-5 flex items-center justify-center font-mono text-[10px] font-bold rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">IT</span>
+          <img src="https://flagcdn.com/w40/it.png" class="w-6 h-4 object-cover rounded-xs border border-zinc-200 dark:border-zinc-700 shadow-xs" alt="IT" />
           <div>
             <div class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Italiano</div>
             <div class="text-[10px] text-zinc-400">Italiano</div>
@@ -568,7 +593,7 @@
         </button>
 
         <button onclick="selectLanguage('es')" class="lang-option p-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 flex items-center gap-2.5 transition-colors text-left group">
-          <span class="w-7 h-5 flex items-center justify-center font-mono text-[10px] font-bold rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">ES</span>
+          <img src="https://flagcdn.com/w40/es.png" class="w-6 h-4 object-cover rounded-xs border border-zinc-200 dark:border-zinc-700 shadow-xs" alt="ES" />
           <div>
             <div class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Español</div>
             <div class="text-[10px] text-zinc-400">Español</div>
@@ -576,7 +601,7 @@
         </button>
 
         <button onclick="selectLanguage('fr')" class="lang-option p-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 flex items-center gap-2.5 transition-colors text-left group">
-          <span class="w-7 h-5 flex items-center justify-center font-mono text-[10px] font-bold rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">FR</span>
+          <img src="https://flagcdn.com/w40/fr.png" class="w-6 h-4 object-cover rounded-xs border border-zinc-200 dark:border-zinc-700 shadow-xs" alt="FR" />
           <div>
             <div class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Français</div>
             <div class="text-[10px] text-zinc-400">Français</div>
@@ -584,7 +609,7 @@
         </button>
 
         <button onclick="selectLanguage('ru')" class="lang-option p-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 flex items-center gap-2.5 transition-colors text-left group">
-          <span class="w-7 h-5 flex items-center justify-center font-mono text-[10px] font-bold rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">RU</span>
+          <img src="https://flagcdn.com/w40/ru.png" class="w-6 h-4 object-cover rounded-xs border border-zinc-200 dark:border-zinc-700 shadow-xs" alt="RU" />
           <div>
             <div class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Русский</div>
             <div class="text-[10px] text-zinc-400">Русский</div>
@@ -592,7 +617,7 @@
         </button>
 
         <button onclick="selectLanguage('sl')" class="lang-option p-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 flex items-center gap-2.5 transition-colors text-left group">
-          <span class="w-7 h-5 flex items-center justify-center font-mono text-[10px] font-bold rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">SL</span>
+          <img src="https://flagcdn.com/w40/si.png" class="w-6 h-4 object-cover rounded-xs border border-zinc-200 dark:border-zinc-700 shadow-xs" alt="SI" />
           <div>
             <div class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Slovenščina</div>
             <div class="text-[10px] text-zinc-400">Slovenščina</div>
@@ -700,7 +725,7 @@
       sr: {
         flag: "🇷🇸",
         name: "Srpski",
-        headerSubtitle: "Generator dvojine i prevodilac sa PONS zvukom",
+        headerSubtitle: "Generator dvojine i prevodilac za slovenački jezik",
         dirAuto: "Automatsko prepoznavanje",
         searchTitle: "Pretraži reč ili celu rečenicu",
         searchDesc: "Upišite reč na srpskom, slovenačkom ili celu rečenicu.",
@@ -722,7 +747,7 @@
         cardDvojinaSub: "Tačno 2 jedinice",
         cardMnozinaTitle: "3. Množina",
         cardMnozinaSub: "3 ili više jedinica",
-        ponsSound: "PONS Zvuk",
+        ponsSound: "Zvučni izgovor",
         naturalVoice: "Prirodni glas",
         declensionTitle: "Deklinacija (Svi padeži)",
         declensionHint: "Kliknite na bilo koji oblik za slušanje",
@@ -751,7 +776,7 @@
       en: {
         flag: "🇬🇧",
         name: "English",
-        headerSubtitle: "Dual & Plural Generator with PONS Audio",
+        headerSubtitle: "Slovenian Dual & Grammar Explorer",
         dirAuto: "Auto-detect",
         searchTitle: "Search a word or full sentence",
         searchDesc: "Enter an English word, a Slovenian word, or a full sentence.",
@@ -773,7 +798,7 @@
         cardDvojinaSub: "Exactly 2 items",
         cardMnozinaTitle: "3. Plural",
         cardMnozinaSub: "3 or more items",
-        ponsSound: "PONS Audio",
+        ponsSound: "Audio Recording",
         naturalVoice: "Natural Voice",
         declensionTitle: "Declension (All cases)",
         declensionHint: "Click any form to hear pronunciation",
@@ -802,7 +827,7 @@
       hr: {
         flag: "🇭🇷",
         name: "Hrvatski",
-        headerSubtitle: "Generator dvojine i prevoditelj s PONS zvukom",
+        headerSubtitle: "Generator dvojine i prevoditelj za slovenski jezik",
         dirAuto: "Automatsko prepoznavanje",
         searchTitle: "Pretraži riječ ili cijelu rečenicu",
         searchDesc: "Upišite riječ na hrvatskom, slovenskom ili cijelu rečenicu.",
@@ -824,7 +849,7 @@
         cardDvojinaSub: "Točno 2 jedinice",
         cardMnozinaTitle: "3. Množina",
         cardMnozinaSub: "3 ili više jedinica",
-        ponsSound: "PONS Zvuk",
+        ponsSound: "Zvučni izgovor",
         naturalVoice: "Prirodni glas",
         declensionTitle: "Deklinacija (Svi padeži)",
         declensionHint: "Kliknite na bilo koji oblik za slušanje",
@@ -851,7 +876,7 @@
       bs: {
         flag: "🇧🇦",
         name: "Bosanski",
-        headerSubtitle: "Generator dvojine i prevodilac sa PONS zvukom",
+        headerSubtitle: "Generator dvojine i prevodilac za slovenski jezik",
         dirAuto: "Automatsko prepoznavanje",
         searchTitle: "Pretraži riječ ili cijelu rečenicu",
         searchDesc: "Upišite riječ na bosanskom, slovenskom ili cijelu rečenicu.",
@@ -873,7 +898,7 @@
         cardDvojinaSub: "Tačno 2 jedinice",
         cardMnozinaTitle: "3. Množina",
         cardMnozinaSub: "3 ili više jedinica",
-        ponsSound: "PONS Zvuk",
+        ponsSound: "Zvučni izgovor",
         naturalVoice: "Prirodni glas",
         declensionTitle: "Deklinacija (Svi padeži)",
         declensionHint: "Kliknite na bilo koji oblik za slušanje",
@@ -900,7 +925,7 @@
       de: {
         flag: "🇩🇪",
         name: "Deutsch",
-        headerSubtitle: "Dual- & Pluralgenerator mit PONS-Audio",
+        headerSubtitle: "Dual- & Plural-Generator für Slowenisch",
         dirAuto: "Automatische Erkennung",
         searchTitle: "Wort oder ganzen Satz suchen",
         searchDesc: "Geben Sie ein deutsches oder slowenisches Wort oder einen ganzen Satz ein.",
@@ -922,7 +947,7 @@
         cardDvojinaSub: "Genau 2 Einheiten",
         cardMnozinaTitle: "3. Mehrzahl (Plural)",
         cardMnozinaSub: "3 oder mehr Einheiten",
-        ponsSound: "PONS Audio",
+        ponsSound: "Audioaufnahme",
         naturalVoice: "Natürliche Stimme",
         declensionTitle: "Deklination (Alle Fälle)",
         declensionHint: "Klicken Sie auf eine beliebige Form zum Anhören",
@@ -949,7 +974,7 @@
       it: {
         flag: "🇮🇹",
         name: "Italiano",
-        headerSubtitle: "Generatore di duale & plurale con audio PONS",
+        headerSubtitle: "Generatore di duale & plurale per lo sloveno",
         dirAuto: "Rilevamento automatico",
         searchTitle: "Cerca una parola o una frase",
         searchDesc: "Inserisci una parola in italiano, in sloveno o un'intera frase.",
@@ -971,7 +996,7 @@
         cardDvojinaSub: "Esattamente 2 unità",
         cardMnozinaTitle: "3. Plurale",
         cardMnozinaSub: "3 o più unità",
-        ponsSound: "Audio PONS",
+        ponsSound: "Audio",
         naturalVoice: "Voce naturale",
         declensionTitle: "Declinazione (Tutti i casi)",
         declensionHint: "Clicca su qualsiasi forma per ascoltare",
@@ -998,7 +1023,7 @@
       es: {
         flag: "🇪🇸",
         name: "Español",
-        headerSubtitle: "Generador de dual & plural con audio PONS",
+        headerSubtitle: "Generador de dual & plural para esloveno",
         dirAuto: "Detección automática",
         searchTitle: "Buscar palabra o frase completa",
         searchDesc: "Escribe una palabra en español, en esloveno o una frase completa.",
@@ -1020,7 +1045,7 @@
         cardDvojinaSub: "Exactamente 2 unidades",
         cardMnozinaTitle: "3. Plural",
         cardMnozinaSub: "3 o más unidades",
-        ponsSound: "Audio PONS",
+        ponsSound: "Audio",
         naturalVoice: "Voz natural",
         declensionTitle: "Declinación (Todos los casos)",
         declensionHint: "Haz clic en cualquier forma para escuchar",
@@ -1047,7 +1072,7 @@
       fr: {
         flag: "🇫🇷",
         name: "Français",
-        headerSubtitle: "Générateur de duel & pluriel avec audio PONS",
+        headerSubtitle: "Générateur de duel & pluriel pour le slovène",
         dirAuto: "Détection automatique",
         searchTitle: "Rechercher un mot ou une phrase",
         searchDesc: "Entrez un mot en français, en slovène ou une phrase entière.",
@@ -1069,7 +1094,7 @@
         cardDvojinaSub: "Exactement 2 unités",
         cardMnozinaTitle: "3. Pluriel",
         cardMnozinaSub: "3 ou plus unités",
-        ponsSound: "Audio PONS",
+        ponsSound: "Audio",
         naturalVoice: "Voix naturelle",
         declensionTitle: "Déclinaison (Tous les cas)",
         declensionHint: "Cliquez sur une forme pour l'écouter",
@@ -1096,7 +1121,7 @@
       ru: {
         flag: "🇷🇺",
         name: "Русский",
-        headerSubtitle: "Генератор двойственного и множественного числа с аудио PONS",
+        headerSubtitle: "Генератор двойственного и множественного числа",
         dirAuto: "Автоопределение",
         searchTitle: "Поиск слова или целого предложения",
         searchDesc: "Введите слово на русском, словенском или целое предложение.",
@@ -1118,7 +1143,7 @@
         cardDvojinaSub: "Ровно 2 единицы",
         cardMnozinaTitle: "3. Множественное",
         cardMnozinaSub: "3 или более единиц",
-        ponsSound: "Аудио PONS",
+        ponsSound: "Аудиозапись",
         naturalVoice: "Естественный голос",
         declensionTitle: "Склонение (Все падежи)",
         declensionHint: "Нажмите на любую форму, чтобы послушать",
@@ -1145,13 +1170,13 @@
       sl: {
         flag: "🇸🇮",
         name: "Slovenščina",
-        headerSubtitle: "Generator dvojine in množine s PONS zvokom",
+        headerSubtitle: "Generator dvojine in slovnični raziskovalec",
         dirAuto: "Samodejno zaznavanje",
         searchTitle: "Poišči besedo ali cel stavek",
         searchDesc: "Vpiši slovensko besedo, tujo besedo ali cel stavek.",
         placeholder: "Vpiši besedo ali stavek (npr. pes, Danes potujem v Ljubljano)...",
         analyzeBtn: "Analiziraj",
-        analyzing: "Analiziram in preverjam PONS izgovorjavo...",
+        analyzing: "Analiziram in prevajam...",
         sentenceBadge: "Prevod stavka",
         sentencePlay: "Naravni glas (1.0x)",
         sentenceSlow: "Počasno (0.75x)",
@@ -1167,7 +1192,7 @@
         cardDvojinaSub: "Natančno 2 enoti",
         cardMnozinaTitle: "3. Množina",
         cardMnozinaSub: "3 ali več enot",
-        ponsSound: "PONS Zvok",
+        ponsSound: "Zvočni posnetek",
         naturalVoice: "Naravni glas",
         declensionTitle: "Sklanjatev (Vsi skloni)",
         declensionHint: "Klikni na katerokoli obliko za poslušanje",
@@ -1441,13 +1466,17 @@
       const t = i18nData[lang] || i18nData.sr;
       const langCode = (t.code || lang).toUpperCase();
 
-      // Header
-      document.getElementById('current-lang-flag').innerText = langCode;
+      // Header & Direction Flags
+      const langFlags = { sr: 'rs', en: 'gb', hr: 'hr', bs: 'ba', de: 'de', it: 'it', es: 'es', fr: 'fr', ru: 'ru', sl: 'si' };
+      const countryCode = langFlags[lang] || 'si';
+      const flagHtml = `<img src="https://flagcdn.com/w40/${countryCode}.png" class="w-4 h-3 object-cover rounded-xs border border-zinc-200 dark:border-zinc-700 shadow-xs" alt="${lang.toUpperCase()}" />`;
+      
+      document.getElementById('current-lang-flag').innerHTML = flagHtml;
       document.getElementById('current-lang-name').innerText = t.name;
       document.getElementById('header-subtitle').innerText = t.headerSubtitle;
 
       // Direction Bar
-      document.getElementById('dir-from-flag').innerText = langCode;
+      document.getElementById('dir-from-flag').innerHTML = flagHtml;
       document.getElementById('dir-from-name').innerText = t.name;
       document.getElementById('dir-auto-tag').innerText = t.dirAuto;
 
@@ -2033,7 +2062,7 @@
           if (item?.source === 'pons') {
             label.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400 mr-1.5"></span>${t.ponsSound}`;
             btn.classList.add(...ponsClasses);
-            btn.title = `PONS posnetek: "${item.word}"`;
+            btn.title = `Zvočni posnetek: "${item.word}"`;
           } else {
             label.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500 mr-1.5"></span>${t.naturalVoice}`;
             btn.classList.add(...neuralClasses);
@@ -2240,6 +2269,9 @@
           feedback.classList.add('bg-emerald-50/80', 'dark:bg-emerald-950/30', 'border', 'border-emerald-200', 'dark:border-emerald-900/50', 'text-emerald-900', 'dark:text-emerald-200');
           feedback.innerHTML = `
             <div class="flex items-center gap-2 font-semibold text-emerald-800 dark:text-emerald-300">
+              <div class="w-5 h-5 rounded-full overflow-hidden border border-emerald-400 dark:border-emerald-600 bg-emerald-100 flex-shrink-0 shadow-2xs">
+                <img src="/mascot.jpg" alt="Dvojček" class="w-full h-full object-cover scale-110 object-top" />
+              </div>
               <i class="fa-solid fa-circle-check text-xs text-emerald-600 dark:text-emerald-400"></i>
               <span>${t.practiceCorrect || 'Pravilno! Odlično poznavanje dvojine.'}</span>
             </div>
@@ -2264,6 +2296,9 @@
 
           feedback.innerHTML = `
             <div class="flex items-center gap-2 font-semibold text-amber-800 dark:text-amber-300">
+              <div class="w-5 h-5 rounded-full overflow-hidden border border-amber-400 dark:border-amber-600 bg-amber-100 flex-shrink-0 shadow-2xs">
+                <img src="/mascot.jpg" alt="Dvojček" class="w-full h-full object-cover scale-110 object-top" />
+              </div>
               <i class="fa-solid fa-triangle-exclamation text-xs text-amber-600 dark:text-amber-400"></i>
               <span>${t.practiceAlmost || 'Skoraj pravilno — pazi na strešice (č, š, ž)!'}</span>
             </div>
@@ -2273,7 +2308,7 @@
             </div>
             <div class="flex items-center justify-between gap-2 pt-0.5 flex-wrap">
               <span class="text-[11px] text-amber-900/80 dark:text-amber-200/80">Pravilna oblika s strešico: <strong class="font-semibold font-mono">${bestExpected}</strong></span>
-              <button onclick="playDirectText('${bestExpected}', this)" class="inline-flex items-center gap-1 px-2 py-0.5 rounded border border-amber-300 dark:border-amber-800 bg-white dark:bg-amber-900/60 text-[11px] text-amber-800 dark:text-amber-200 hover:bg-amber-50 dark:hover:bg-amber-800 transition-colors">
+              <button onclick="playDirectText('${bestExpected}', this)" class="inline-flex items-center gap-1 px-2 py-0.5 rounded border border-amber-300 dark:border-amber-800 bg-white dark:bg-amber-900/60 text-[11px] text-amber-800 dark:text-amber-200 hover:bg-amber-50 dark:hover:bg-emerald-800 transition-colors">
                 <i class="fa-solid fa-volume-high text-[10px]"></i> ${t.practiceListen || 'Poslušaj'}
               </button>
             </div>
@@ -2283,6 +2318,9 @@
           feedback.classList.add('bg-zinc-100/80', 'dark:bg-zinc-900', 'border', 'border-zinc-200', 'dark:border-zinc-800', 'text-zinc-800', 'dark:text-zinc-200');
           feedback.innerHTML = `
             <div class="flex items-center gap-2 font-semibold text-zinc-800 dark:text-zinc-200">
+              <div class="w-5 h-5 rounded-full overflow-hidden border border-zinc-300 dark:border-zinc-700 bg-zinc-200 dark:bg-zinc-800 flex-shrink-0 shadow-2xs">
+                <img src="/mascot.jpg" alt="Dvojček" class="w-full h-full object-cover scale-110 object-top" />
+              </div>
               <i class="fa-solid fa-circle-xmark text-xs text-zinc-500"></i>
               <span>${t.practiceWrong || 'Poskusi znova.'}</span>
             </div>
