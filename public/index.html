@@ -388,12 +388,12 @@
         
         <!-- 1. Ednina Card -->
         <div class="bg-white dark:bg-[#121215] rounded-lg p-4 border border-zinc-200 dark:border-zinc-800 flex flex-col justify-between">
-          <div class="flex justify-between items-start mb-3">
-            <span class="text-xs font-semibold uppercase tracking-wider text-zinc-500" id="card-ednina-title">
+          <div class="flex justify-between items-start mb-3 gap-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-zinc-500 min-w-0" id="card-ednina-title">
               1. Ednina
             </span>
             <button id="ednina-audio-btn" onclick="playAudioTrack('ednina', this)" title="Poslušaj izgovorjavo" 
-              class="px-2 py-1 rounded border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1 transition-colors">
+              class="px-2 py-1 rounded border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1 transition-colors whitespace-nowrap flex-shrink-0">
               <i class="fa-solid fa-volume-high text-[11px]"></i>
               <span id="ednina-audio-label">Zvok</span>
             </button>
@@ -407,13 +407,13 @@
 
         <!-- 2. Dvojina Card (Architectural Accent: High Contrast Precision Border) -->
         <div class="bg-white dark:bg-[#121215] rounded-lg p-4 border-2 border-zinc-900 dark:border-zinc-100 flex flex-col justify-between relative">
-          <div class="flex justify-between items-start mb-3">
-            <span class="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5" id="card-dvojina-title">
-              <span class="w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-zinc-100"></span>
-              <span>2. Dvojina</span>
+          <div class="flex justify-between items-start mb-3 gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5 min-w-0" id="card-dvojina-title">
+              <span class="w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-zinc-100 flex-shrink-0"></span>
+              <span class="truncate">2. Dvojina</span>
             </span>
             <button id="dvojina-audio-btn" onclick="playAudioTrack('dvojina', this)" title="Poslušaj izgovorjavo" 
-              class="px-2 py-1 rounded border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 text-xs font-medium text-zinc-900 dark:text-zinc-100 flex items-center gap-1 transition-colors">
+              class="px-2 py-1 rounded border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 text-xs font-medium text-zinc-900 dark:text-zinc-100 flex items-center gap-1 transition-colors whitespace-nowrap flex-shrink-0">
               <i class="fa-solid fa-volume-high text-[11px]"></i>
               <span id="dvojina-audio-label">Zvok</span>
             </button>
@@ -427,12 +427,12 @@
 
         <!-- 3. Mnozina Card -->
         <div class="bg-white dark:bg-[#121215] rounded-lg p-4 border border-zinc-200 dark:border-zinc-800 flex flex-col justify-between">
-          <div class="flex justify-between items-start mb-3">
-            <span class="text-xs font-semibold uppercase tracking-wider text-zinc-500" id="card-mnozina-title">
+          <div class="flex justify-between items-start mb-3 gap-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-zinc-500 min-w-0" id="card-mnozina-title">
               3. Množina
             </span>
             <button id="mnozina-audio-btn" onclick="playAudioTrack('mnozina', this)" title="Poslušaj izgovorjavo" 
-              class="px-2 py-1 rounded border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1 transition-colors">
+              class="px-2 py-1 rounded border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1 transition-colors whitespace-nowrap flex-shrink-0">
               <i class="fa-solid fa-volume-high text-[11px]"></i>
               <span id="mnozina-audio-label">Zvok</span>
             </button>
@@ -2059,14 +2059,15 @@
         const item = audio?.[key];
         if (label && btn) {
           btn.classList.remove(...ponsClasses, ...neuralClasses);
+          const voiceLabel = t.naturalVoice || 'Prirodni glas';
           if (item?.source === 'pons') {
-            label.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400 mr-1.5"></span>${t.ponsSound}`;
+            label.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400 mr-1.5 flex-shrink-0" title="PONS.com"></span><span class="whitespace-nowrap">${voiceLabel}</span>`;
             btn.classList.add(...ponsClasses);
-            btn.title = `Zvočni posnetek: "${item.word}"`;
+            btn.title = `PONS posnetek (PONS.com): "${item.word}"`;
           } else {
-            label.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500 mr-1.5"></span>${t.naturalVoice}`;
+            label.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500 mr-1.5 flex-shrink-0"></span><span class="whitespace-nowrap">${voiceLabel}</span>`;
             btn.classList.add(...neuralClasses);
-            btn.title = `Nevronski slovenski glas: "${item?.word}"`;
+            btn.title = `${voiceLabel}: "${item?.word}"`;
           }
         }
       });

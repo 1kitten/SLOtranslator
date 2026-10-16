@@ -2480,5 +2480,16 @@
     "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
     "franUrl": "https://fran.si/iskanje?View=1&Query=danes",
     "franjaUrl": "https://franja.si/iskanje?sl=sh&tl=sl&q=danes"
+  },
+  {
+    "slWord": "zelo",
+    "accent": "zeló",
+    "spol": null,
+    "translations": {
+      "sr": "jako"
+    },
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=zelo",
+    "franjaUrl": "https://franja.si/iskanje?sl=sh&tl=sl&q=jako"
   }
 ]
