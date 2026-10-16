@@ -2475,11 +2475,11 @@
     "accent": "dánes",
     "spol": null,
     "translations": {
-      "sr": "danes"
+      "sr": "danas"
     },
     "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
     "franUrl": "https://fran.si/iskanje?View=1&Query=danes",
-    "franjaUrl": "https://franja.si/iskanje?sl=sh&tl=sl&q=danes"
+    "franjaUrl": "https://franja.si/iskanje?sl=sh&tl=sl&q=danas"
   },
   {
     "slWord": "zelo",
@@ -2491,5 +2491,16 @@
     "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
     "franUrl": "https://fran.si/iskanje?View=1&Query=zelo",
     "franjaUrl": "https://franja.si/iskanje?sl=sh&tl=sl&q=jako"
+  },
+  {
+    "slWord": "nekaj",
+    "accent": "nékaj",
+    "spol": null,
+    "translations": {
+      "sr": "nešto"
+    },
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=nekaj",
+    "franjaUrl": "https://franja.si/iskanje?sl=sh&tl=sl&q=ne%C5%A1to"
   }
 ]

@@ -572,7 +572,7 @@ app.get('/api/analyze', async (req, res) => {
     const franResolved = await resolveWordWithFran(lookupWord, userLang);
     if (franResolved) {
       slWord = franResolved.slWord;
-      detectedLang = franResolved.fromDb || franResolved.liveFetched ? (userLang === 'sl' ? 'sl' : userLang) : 'sl';
+      detectedLang = franResolved.matchedLang || (franResolved.fromDb || franResolved.liveFetched ? (userLang === 'sl' ? 'sl' : userLang) : 'sl');
       franData = {
         accent: franResolved.accent || slWord,
         spol: franResolved.spol,

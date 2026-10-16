@@ -110,8 +110,14 @@ function parseFranjaEntry(html, targetWord) {
   }
   if (!entries.length) return null;
 
-  // Find best matching entry
+  // Find best matching entry whose headword actually matches targetWord
+  const normTarget = targetWord.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
   for (const entryHtml of entries) {
+    const hwMatch = entryHtml.match(/<strong[^>]*class=["'][^"']*color-primary[^"']*["'][^>]*>([\s\S]*?)<\/strong>/i);
+    if (!hwMatch) continue;
+    const hwClean = hwMatch[1].replace(/<[^>]+>/g, '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+    if (hwClean !== normTarget) continue;
+
     // Strip headword
     let clean = entryHtml.replace(/<strong[^>]*class=["'][^"']*color-primary[^"']*["'][\s\S]*?<\/strong>/gi, '');
     clean = clean.replace(/<sup>[\s\S]*?<\/sup>/gi, '');
@@ -191,6 +197,15 @@ export async function lookupFranLive(slWord) {
       if (m) {
         const entryHtml = m[1];
 
+        // Extract accentuation & verify headword matches cleanWord
+        const accentMatch = entryHtml.match(/<span class="font_xlarge"><a[^>]*>([^<]+)<\/a><\/span>/i);
+        const accent = accentMatch ? accentMatch[1].trim() : cleanWord;
+        const normAccent = accent.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+        const normClean = cleanWord.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+        if (accentMatch && normAccent !== normClean) {
+          return null;
+        }
+
         // Determine part of speech & gender from official Fran metadata
         let spol = null;
         let partOfSpeech = "samostalnik";
@@ -203,10 +218,6 @@ export async function lookupFranLive(slWord) {
         } else if (/samostalnik srednjega spola|\bsrednjega spola\b|title=["']samostalnik srednjega spola["']|\bs\b\s*[,.\(]/i.test(entryHtml)) {
           spol = "Srednji spol";
         }
-
-        // Extract accentuation
-        const accentMatch = entryHtml.match(/<span class="font_xlarge"><a[^>]*>([^<]+)<\/a><\/span>/i);
-        const accent = accentMatch ? accentMatch[1].trim() : cleanWord;
 
         return {
           slWord: cleanWord,
@@ -234,6 +245,7 @@ export async function resolveWordWithFran(word, fromLang = 'auto') {
   // Step 1: Check Local Verified Database
   const local = findInLocalDictionary(clean, fromLang);
   if (local) {
+    const isSlMatch = local.slWord.toLowerCase() === clean && (!local.translations || local.translations[fromLang]?.toLowerCase() !== clean);
     return {
       slWord: local.slWord,
       accent: local.accent || local.slWord,
@@ -244,21 +256,28 @@ export async function resolveWordWithFran(word, fromLang = 'auto') {
       franUrl: local.franUrl || `https://fran.si/iskanje?View=1&Query=${encodeURIComponent(local.slWord)}`,
       franjaUrl: local.franjaUrl || `https://franja.si/iskanje?sl=en&tl=sl&q=${encodeURIComponent(clean)}`,
       verified: true,
-      fromDb: true
+      fromDb: true,
+      matchedLang: isSlMatch ? 'sl' : fromLang
     };
   }
 
   // Step 2: If foreign word, query live Franja.si
   let slCandidate = null;
   let franjaData = null;
+  let matchedLang = fromLang;
 
   if (fromLang !== 'sl') {
     franjaData = await lookupFranjaLive(clean, fromLang);
     if (franjaData && franjaData.slWord) {
       slCandidate = franjaData.slWord;
+    } else {
+      // Fallback: check if input word is already a Slovenian word on Fran.si
+      slCandidate = clean;
+      matchedLang = 'sl';
     }
   } else {
     slCandidate = clean;
+    matchedLang = 'sl';
   }
 
   // Step 3: If we have a Slovene candidate, verify on live Fran.si
@@ -274,15 +293,16 @@ export async function resolveWordWithFran(word, fromLang = 'auto') {
         franUrl: franData.franUrl,
         franjaUrl: franjaData?.franjaUrl || `https://franja.si/iskanje?sl=en&tl=sl&q=${encodeURIComponent(clean)}`,
         verified: true,
-        liveFetched: true
+        liveFetched: true,
+        matchedLang
       };
 
-      // Persist to local database to grow our dictionary
+      // Persist to local database only when we have a genuine foreign->Slovene translation or Slovene headword
       persistNewEntry({
         slWord: slCandidate,
         accent: result.accent,
         spol: result.spol,
-        translations: { [fromLang]: clean },
+        translations: matchedLang !== 'sl' ? { [fromLang]: clean } : {},
         source: result.dictSource,
         franUrl: result.franUrl,
         franjaUrl: result.franjaUrl
