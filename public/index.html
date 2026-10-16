@@ -1511,6 +1511,13 @@
       
       const practiceCheckLabel = document.getElementById('practice-check-label');
       if (practiceCheckLabel) practiceCheckLabel.innerText = t.practiceCheck || 'Preveri';
+
+      // Re-render active view if analysis exists
+      if (currentAnalysis) {
+        if (currentAnalysis.isSentence) renderSentenceUI(currentAnalysis);
+        else if (currentAnalysis.isVerb) renderVerbUI(currentAnalysis);
+        else renderWordUI(currentAnalysis);
+      }
     }
 
     function clearInput() {
@@ -1678,17 +1685,66 @@
     // When clicking a token in the sentence, load declension tables below
     async function analyzeWordDirectly(word) {
       const statusMsg = document.getElementById('status-message');
+      const didYouMeanBanner = document.getElementById('did-you-mean-banner');
+      const correctionBanner = document.getElementById('correction-banner');
+      const t = i18nData[currentLang] || i18nData.sr;
+
       statusMsg.classList.remove('hidden', 'text-red-500');
       statusMsg.classList.add('text-zinc-600', 'dark:text-zinc-400');
-      statusMsg.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5 text-xs"></i> Nalagam: <strong>' + word + '</strong>...';
+      statusMsg.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5 text-xs"></i> ' + (t.analyzing || 'Nalagam') + ': <strong>' + word + '</strong>...';
+
+      if (didYouMeanBanner) didYouMeanBanner.classList.add('hidden');
+      if (correctionBanner) correctionBanner.classList.add('hidden');
+      document.getElementById('verb-results-container').classList.add('hidden');
+      document.getElementById('results-container').classList.add('hidden');
 
       try {
         const res = await fetch(`/api/analyze?q=${encodeURIComponent(word)}&ui=${encodeURIComponent(currentLang)}`);
         if (!res.ok) throw new Error('Napaka pri analizi besede');
         const data = await res.json();
         
-        document.getElementById('verb-results-container').classList.add('hidden');
-        document.getElementById('results-container').classList.add('hidden');
+        // Check 1: Typo Tolerance & Suggestions
+        if (data.notFound) {
+          statusMsg.classList.add('hidden');
+          if (data.suggestions && data.suggestions.length > 0 && didYouMeanBanner) {
+            didYouMeanBanner.classList.remove('hidden');
+            const chips = document.getElementById('did-you-mean-chips');
+            chips.innerHTML = '';
+            data.suggestions.forEach(s => {
+              const chip = document.createElement('button');
+              chip.className = "px-2.5 py-1 rounded-md bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-medium border border-zinc-300 dark:border-zinc-700 text-xs transition-colors shadow-xs flex items-center gap-1.5";
+              chip.innerHTML = `<strong>${s.word}</strong> <span class="text-[10px] text-zinc-400 uppercase font-mono">(${s.lang || 'sl'})</span>`;
+              chip.onclick = () => {
+                document.getElementById('word-input').value = s.word;
+                document.getElementById('clear-input-btn').classList.remove('hidden');
+                processInput(s.word, false);
+              };
+              chips.appendChild(chip);
+            });
+          } else {
+            statusMsg.classList.remove('hidden', 'text-zinc-600', 'dark:text-zinc-400');
+            statusMsg.classList.add('text-red-500');
+            statusMsg.innerText = "Beseda ni bila najdena v slovarju.";
+          }
+          return;
+        }
+
+        // Check 2: Diacritic Soft Auto-Correction
+        if (data.correction && correctionBanner) {
+          lastCorrectionFrom = data.correction.from;
+          correctionBanner.classList.remove('hidden');
+          const targetWord = data.slWord || data.correction.to;
+          const fromWord = data.correction.from;
+          const correctedText = `${t.showingResultsFor || 'Prikazujem rezultate za'} <strong>${targetWord}</strong> (${t.correctedFrom || 'popravljeno iz'} '${fromWord}')`;
+          document.getElementById('correction-text').innerHTML = correctedText;
+          const searchInsteadTemplate = t.searchInstead || "Išči vseeno '{word}'";
+          document.getElementById('search-exact-btn').innerText = searchInsteadTemplate.replace('{word}', fromWord);
+        } else if (correctionBanner) {
+          correctionBanner.classList.add('hidden');
+        }
+
+        // Update active currentAnalysis so audio playback & practice card work accurately
+        currentAnalysis = data;
 
         if (data.isVerb) {
           renderVerbUI(data);

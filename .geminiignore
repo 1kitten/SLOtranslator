@@ -1,0 +1,10 @@
+# Package Lockfiles & Dependencies
+package-lock.json
+node_modules/
+.git/
+.vercel/
+
+# Heavy data & logs
+*.log
+logs/
+data/dictionary.json
