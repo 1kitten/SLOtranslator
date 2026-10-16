@@ -1,0 +1,2269 @@
+<!DOCTYPE html>
+<html lang="sl" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SloDvojina — Slovenska dvojina & slovar</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { 
+            sans: ['"Inter"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 3px; }
+    .dark ::-webkit-scrollbar-thumb { background: #3f3f46; }
+    
+    .playing-audio { 
+      background-color: #f4f4f5 !important; 
+      border-color: #71717a !important; 
+      color: #18181b !important; 
+    }
+    .dark .playing-audio { 
+      background-color: #27272a !important; 
+      border-color: #a1a1aa !important; 
+      color: #fafafa !important; 
+    }
+    
+    .word-token-active { 
+      background-color: #18181b !important; 
+      color: #fafafa !important; 
+      border-color: #18181b !important; 
+    }
+    .dark .word-token-active { 
+      background-color: #fafafa !important; 
+      color: #18181b !important; 
+      border-color: #fafafa !important; 
+    }
+  </style>
+</head>
+<body class="bg-[#FAFAFA] dark:bg-[#09090B] text-zinc-900 dark:text-zinc-100 min-h-screen antialiased transition-colors duration-150">
+
+  <!-- Header -->
+  <header class="bg-white dark:bg-[#121215] border-b border-zinc-200 dark:border-zinc-800 sticky top-0 z-40">
+    <div class="max-w-4xl mx-auto px-4 py-2.5 flex justify-between items-center">
+      <div class="flex items-center space-x-2.5 cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <div class="w-7 h-7 rounded border border-zinc-900 dark:border-zinc-100 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center font-mono text-xs font-bold tracking-tight">
+          SL
+        </div>
+        <div class="flex items-baseline gap-2">
+          <h1 class="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-100" id="app-brand-name">SloDvojina</h1>
+          <span class="text-[11px] text-zinc-400 font-normal hidden sm:inline" id="header-subtitle">Generator dvojine & prevajalnik</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <!-- Language Switcher Pill -->
+        <button id="lang-picker-btn" onclick="openLangModal()" 
+          class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-zinc-50 dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-800 transition-colors text-xs font-medium text-zinc-700 dark:text-zinc-300">
+          <span id="current-lang-flag" class="font-mono text-[10px] font-bold text-zinc-500 uppercase">SR</span>
+          <span id="current-lang-name">Srpski</span>
+          <i class="fa-solid fa-chevron-down text-[9px] text-zinc-400 ml-0.5"></i>
+        </button>
+
+        <!-- Dark mode toggle -->
+        <button id="theme-toggle" class="w-7 h-7 flex items-center justify-center rounded-md border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800/80 transition-colors text-zinc-500 dark:text-zinc-400" title="Preklopi temo">
+          <i class="fa-solid fa-moon text-xs" id="theme-icon"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-4xl mx-auto px-4 py-6 space-y-4">
+    
+    <!-- Search / Command Panel -->
+    <section class="bg-white dark:bg-[#121215] p-4 sm:p-5 rounded-lg border border-zinc-200 dark:border-zinc-800 space-y-3.5">
+      
+      <!-- Direction Status Bar -->
+      <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800/80 pb-2.5">
+        <div class="inline-flex items-center gap-2 text-xs font-medium text-zinc-600 dark:text-zinc-400">
+          <span id="dir-from-badge" class="flex items-center gap-1">
+            <span id="dir-from-flag" class="font-mono text-[10px] font-semibold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">SR</span>
+            <span id="dir-from-name">Srpski</span>
+          </span>
+          <i class="fa-solid fa-arrow-right text-[10px] text-zinc-400"></i>
+          <span class="flex items-center gap-1 font-semibold text-zinc-900 dark:text-zinc-100">
+            <span class="font-mono text-[10px] font-semibold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">SL</span>
+            <span>Slovenščina</span>
+          </span>
+        </div>
+        <span class="text-[11px] text-zinc-400 font-mono" id="dir-auto-tag">Samodejno zaznavanje</span>
+      </div>
+
+      <div class="space-y-0.5">
+        <h2 class="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-100" id="search-title">Poišči besedo ali cel stavek</h2>
+        <p class="text-xs text-zinc-500 dark:text-zinc-400" id="search-desc">
+          Vpiši slovensko besedo, besedo v tvojem jeziku ali celoten stavek.
+        </p>
+      </div>
+
+      <!-- Search Input + Action -->
+      <div class="flex flex-col sm:flex-row gap-2">
+        <div class="relative flex-1">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-400">
+            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+          </div>
+          <input type="text" id="word-input" 
+            class="block w-full pl-8 pr-8 py-2 bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200 dark:border-zinc-800 rounded-md text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-600 focus:bg-white dark:focus:bg-zinc-900 transition-colors" 
+            placeholder="Vpiši besedo ali stavek..." autocomplete="off" onkeypress="handleEnter(event)">
+          <button id="clear-input-btn" onclick="clearInput()" class="hidden absolute inset-y-0 right-0 pr-2.5 flex items-center text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
+            <i class="fa-solid fa-xmark text-xs"></i>
+          </button>
+        </div>
+        <button onclick="processInput()" id="analyze-btn"
+          class="bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-medium py-2 px-4 rounded-md text-xs sm:text-sm transition-colors flex items-center justify-center gap-1.5 whitespace-nowrap">
+          <span id="analyze-btn-text">Analiziraj</span>
+          <i class="fa-solid fa-arrow-right text-[11px]"></i>
+        </button>
+      </div>
+
+      <!-- Did You Mean Banner (Typo Tolerance & Fuzzy Matching) -->
+      <div id="did-you-mean-banner" class="hidden p-3 rounded-md bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs space-y-1.5">
+        <div class="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400 font-medium">
+          <i class="fa-solid fa-wand-magic-sparkles text-[11px] text-zinc-500"></i>
+          <span id="did-you-mean-label">Ali ste mislili:</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-1.5" id="did-you-mean-chips">
+          <!-- Suggestion chips injected dynamically -->
+        </div>
+      </div>
+
+      <!-- Diacritic Auto-Correction Banner (č, š, ž, ć, đ) -->
+      <div id="correction-banner" class="hidden p-2.5 rounded-md bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-amber-900 dark:text-amber-200">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-circle-check text-[11px] text-amber-600 dark:text-amber-400"></i>
+          <span id="correction-text">Prikazujem rezultate za <strong>hiša</strong> (samodejno popravljeno iz 'hisa')</span>
+        </div>
+        <button id="search-exact-btn" onclick="searchExactOriginal()" class="text-[11px] font-medium text-amber-800 dark:text-amber-300 underline hover:no-underline text-left sm:text-right">
+          Išči vseeno
+        </button>
+      </div>
+
+      <!-- Quick Suggestion Chips -->
+      <div class="flex flex-wrap items-center gap-1.5 pt-0.5 text-xs" id="quick-chips-container">
+        <!-- Rendered dynamically -->
+      </div>
+      
+      <div id="status-message" class="text-xs font-medium hidden"></div>
+    </section>
+
+    <!-- Sentence Results Section -->
+    <section id="sentence-results-container" class="hidden space-y-4">
+      <div class="bg-white dark:bg-[#121215] p-4 sm:p-5 rounded-lg border border-zinc-200 dark:border-zinc-800 space-y-3.5">
+        
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-2.5 border-b border-zinc-100 dark:border-zinc-800">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-zinc-500" id="sentence-badge-title">Prevod stavka</span>
+            <span id="sentence-detected-tag" class="font-mono text-[10px] font-semibold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300"></span>
+          </div>
+
+          <div class="flex items-center gap-1.5">
+            <button id="sentence-audio-btn" onclick="playSentenceAudio('normal')" 
+              class="px-2.5 py-1 rounded-md bg-zinc-50 dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-medium flex items-center gap-1.5 transition-colors">
+              <i class="fa-solid fa-volume-high text-[11px] text-zinc-500"></i>
+              <span id="sentence-play-label">Naravni glas (1.0x)</span>
+            </button>
+            <button id="sentence-slow-btn" onclick="playSentenceAudio('slow')" 
+              class="px-2.5 py-1 rounded-md bg-zinc-50 dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-medium flex items-center gap-1.5 transition-colors"
+              title="Počasen izgovor">
+              <i class="fa-solid fa-gauge-simple text-[11px] text-zinc-500"></i>
+              <span id="sentence-slow-label">Počasno (0.75x)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Translated Text + Inline Phonemic Pronunciation Guide -->
+        <div class="space-y-0.5">
+          <div class="text-[11px] uppercase tracking-wider font-semibold text-zinc-400">Slovenščina</div>
+          <div class="flex items-baseline gap-2 flex-wrap">
+            <div class="text-lg sm:text-xl font-semibold text-zinc-900 dark:text-zinc-100 leading-snug" id="sentence-sl-text">--</div>
+            <span id="sentence-phonemic-respelling" class="font-mono text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 font-medium"></span>
+            <span id="sentence-phonemic-ipa" class="font-mono text-xs sm:text-sm text-zinc-400 dark:text-zinc-500"></span>
+            <button onclick="openPhonemicModal()" class="inline-flex items-center gap-1 text-[10px] font-mono px-1.5 py-0.5 rounded border border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors" title="Razlaga fonemskih oznak in naglasov">
+              <i class="fa-solid fa-circle-question text-[9px]"></i>
+              <span>IPA</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Meaning -->
+        <div class="p-3 bg-zinc-50 dark:bg-zinc-950/60 rounded-md border border-zinc-200 dark:border-zinc-800 space-y-0.5">
+          <div class="text-[11px] uppercase tracking-wider font-semibold text-zinc-400" id="sentence-meaning-label">Pomen / Prevod</div>
+          <div class="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 font-medium" id="sentence-meaning-text">--</div>
+        </div>
+
+        <!-- Token Breakdown -->
+        <div class="pt-2 border-t border-zinc-100 dark:border-zinc-800 space-y-1.5">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-semibold text-zinc-700 dark:text-zinc-300" id="token-breakdown-title">Razčlemba besed v stavku:</span>
+            <span class="text-[11px] text-zinc-400" id="token-breakdown-sub">(klikni besedo za dvojino in sklanjanje)</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5" id="sentence-tokens-container">
+            <!-- Tokens injected dynamically -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Verb Conjugation Results Section -->
+    <section id="verb-results-container" class="hidden space-y-4">
+      
+      <!-- Verb Header -->
+      <div class="bg-white dark:bg-[#121215] p-4 sm:p-5 rounded-lg border border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <div>
+          <div class="flex items-center gap-2 mb-1 flex-wrap">
+            <span id="verb-detected-lang-tag" class="text-xs font-medium text-zinc-500"></span>
+            <span id="verb-original-word-tag" class="text-xs text-zinc-400 font-normal"></span>
+            <a id="verb-fran-badge-link" href="https://fran.si" target="_blank" rel="noopener noreferrer" 
+              class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-200 border border-amber-200/70 dark:border-amber-900/50 text-[11px] font-medium hover:underline">
+              <i class="fa-solid fa-book-bookmark text-[10px] text-amber-700"></i>
+              <span id="verb-fran-badge-text">Fran.si • SSKJ</span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[8px] opacity-60"></i>
+            </a>
+          </div>
+          <div class="flex items-baseline gap-2 flex-wrap">
+            <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100" id="verb-infinitive-text">delovati</h2>
+            <span id="verb-accent-tag" class="font-mono text-xs sm:text-sm text-zinc-400"></span>
+            <span id="verb-phonemic-respelling" class="font-mono text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 font-medium" title="Fonemski zapis po zlogih"></span>
+            <span id="verb-phonemic-ipa" class="font-mono text-xs sm:text-sm text-zinc-400 dark:text-zinc-500" title="Mednarodna fonetična abeceda (IPA)"></span>
+            <button onclick="openPhonemicModal()" class="inline-flex items-center gap-1 text-[10px] font-mono px-1.5 py-0.5 rounded border border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors" title="Razlaga fonemskih oznak in naglasov">
+              <i class="fa-solid fa-circle-question text-[9px]"></i>
+              <span>IPA</span>
+            </button>
+            <button onclick="playDirectText(document.getElementById('verb-infinitive-text').innerText, this)" 
+              class="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors" title="Poslušaj nedoločnik">
+              <i class="fa-solid fa-volume-high text-xs"></i>
+            </button>
+          </div>
+          <p class="text-xs text-zinc-600 dark:text-zinc-400 mt-1 font-medium" id="verb-meaning-text">--</p>
+        </div>
+        <div class="px-2 py-1 rounded bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs font-medium text-zinc-700 dark:text-zinc-300">
+          Glagol (Verb)
+        </div>
+      </div>
+
+      <!-- Core Dvojina Card (Clean Structured View) -->
+      <div class="bg-white dark:bg-[#121215] p-4 sm:p-5 rounded-lg border border-zinc-200 dark:border-zinc-800 space-y-4">
+        
+        <div class="border-b border-zinc-100 dark:border-zinc-800 pb-2.5 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 uppercase">Dvojina</span>
+            <h3 class="text-xs sm:text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+              Spreganje v dvojini glede na slovnično osebo
+            </h3>
+          </div>
+          <span class="text-[11px] text-zinc-400 font-mono">Dual forms</span>
+        </div>
+
+        <!-- 1. Present Tense (Sedanjik) -->
+        <div class="space-y-1.5">
+          <div class="text-xs font-semibold uppercase tracking-wider text-zinc-500">1. Present Tense (Sedanjik)</div>
+          <ul class="divide-y divide-zinc-100 dark:divide-zinc-800/60 border border-zinc-200 dark:border-zinc-800 rounded-md" id="verb-sedanjik-list">
+            <!-- Injected dynamically -->
+          </ul>
+        </div>
+
+        <!-- 2. Past Tense (Preteklik) -->
+        <div class="space-y-1.5">
+          <div>
+            <div class="text-xs font-semibold uppercase tracking-wider text-zinc-500">2. Past Tense (Preteklik)</div>
+            <p class="text-[11px] text-zinc-400 mt-0.5">
+              Oblika se v dvojini spreminja glede na spol dveh oseb/stvari:
+            </p>
+          </div>
+          <ul class="divide-y divide-zinc-100 dark:divide-zinc-800/60 border border-zinc-200 dark:border-zinc-800 rounded-md" id="verb-preteklik-list">
+            <!-- Injected dynamically -->
+          </ul>
+        </div>
+
+        <!-- 3. Future Tense (Prihodnjik) -->
+        <div class="space-y-1.5">
+          <div class="text-xs font-semibold uppercase tracking-wider text-zinc-500">3. Future Tense (Prihodnjik)</div>
+          <ul class="divide-y divide-zinc-100 dark:divide-zinc-800/60 border border-zinc-200 dark:border-zinc-800 rounded-md" id="verb-prihodnjik-list">
+            <!-- Injected dynamically -->
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Complete Conjugation Overview Table -->
+      <div class="bg-white dark:bg-[#121215] p-4 sm:p-5 rounded-lg border border-zinc-200 dark:border-zinc-800 space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs sm:text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+            Preglednica vseh oblik (Sedanjik, Preteklik, Prihodnjik)
+          </h3>
+          <span class="text-[11px] text-zinc-400">Klikni katero koli obliko za poslušanje</span>
+        </div>
+
+        <div class="overflow-x-auto border border-zinc-200 dark:border-zinc-800 rounded-md">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-zinc-50 dark:bg-zinc-900/60 border-b border-zinc-200 dark:border-zinc-800 text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">
+                <th class="p-2.5">Oseba</th>
+                <th class="p-2.5">Ednina</th>
+                <th class="p-2.5 bg-zinc-100/60 dark:bg-zinc-800/40 text-zinc-900 dark:text-zinc-100 font-bold">Dvojina</th>
+                <th class="p-2.5">Množina</th>
+              </tr>
+            </thead>
+            <tbody id="verb-full-table-body" class="divide-y divide-zinc-100 dark:divide-zinc-800 font-normal">
+              <!-- Injected dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Word Declension Results Section -->
+    <section id="results-container" class="hidden space-y-4">
+      
+      <!-- Word Header & Meta -->
+      <div class="bg-white dark:bg-[#121215] p-4 sm:p-5 rounded-lg border border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <div>
+          <div class="flex items-center gap-2 mb-1 flex-wrap">
+            <span id="detected-lang-tag" class="text-xs font-medium text-zinc-500"></span>
+            <span id="original-word-tag" class="text-xs text-zinc-400 font-normal"></span>
+            <a id="fran-badge-link" href="https://fran.si" target="_blank" rel="noopener noreferrer" 
+              class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-200 border border-amber-200/70 dark:border-amber-900/50 text-[11px] font-medium hover:underline" title="Preveri v uradnem slovarju Fran.si / Franja.si">
+              <i class="fa-solid fa-book-bookmark text-[10px] text-amber-700"></i>
+              <span id="fran-badge-text">Fran.si • SSKJ</span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[8px] opacity-60"></i>
+            </a>
+          </div>
+          <div class="flex items-baseline gap-2 flex-wrap">
+            <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 capitalize" id="translated-sl-word">Beseda</h2>
+            <span id="word-accent-tag" class="font-mono text-xs sm:text-sm text-zinc-400 font-serif" title="Naglas po SSKJ"></span>
+            <span id="word-phonemic-respelling" class="font-mono text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 font-medium" title="Fonemski zapis po zlogih"></span>
+            <span id="word-phonemic-ipa" class="font-mono text-xs sm:text-sm text-zinc-400 dark:text-zinc-500" title="Mednarodna fonetična abeceda (IPA)"></span>
+            <button onclick="openPhonemicModal()" class="inline-flex items-center gap-1 text-[10px] font-mono px-1.5 py-0.5 rounded border border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors" title="Razlaga fonemskih oznak in naglasov">
+              <i class="fa-solid fa-circle-question text-[9px]"></i>
+              <span>IPA</span>
+            </button>
+          </div>
+          <div class="text-xs text-zinc-600 dark:text-zinc-400 mt-1 font-medium" id="word-meaning-tag"></div>
+        </div>
+        <div class="px-2 py-1 rounded bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs font-medium text-zinc-700 dark:text-zinc-300" id="word-gender-info">
+          Spol
+        </div>
+      </div>
+
+      <!-- 3 Main Cards (Ednina, Dvojina, Mnozina) -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        
+        <!-- 1. Ednina Card -->
+        <div class="bg-white dark:bg-[#121215] rounded-lg p-4 border border-zinc-200 dark:border-zinc-800 flex flex-col justify-between">
+          <div class="flex justify-between items-start mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider text-zinc-500" id="card-ednina-title">
+              1. Ednina
+            </span>
+            <button id="ednina-audio-btn" onclick="playAudioTrack('ednina', this)" title="Poslušaj izgovorjavo" 
+              class="px-2 py-1 rounded border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1 transition-colors">
+              <i class="fa-solid fa-volume-high text-[11px]"></i>
+              <span id="ednina-audio-label">Zvok</span>
+            </button>
+          </div>
+          <div>
+            <div class="text-xl font-bold text-zinc-900 dark:text-zinc-100 tabular-nums" id="card-ednina-val">--</div>
+            <div class="font-mono text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5" id="card-ednina-phonemic"></div>
+            <p class="text-[11px] text-zinc-400 mt-0.5" id="card-ednina-sub">Ena enota</p>
+          </div>
+        </div>
+
+        <!-- 2. Dvojina Card (Architectural Accent: High Contrast Precision Border) -->
+        <div class="bg-white dark:bg-[#121215] rounded-lg p-4 border-2 border-zinc-900 dark:border-zinc-100 flex flex-col justify-between relative">
+          <div class="flex justify-between items-start mb-3">
+            <span class="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5" id="card-dvojina-title">
+              <span class="w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-zinc-100"></span>
+              <span>2. Dvojina</span>
+            </span>
+            <button id="dvojina-audio-btn" onclick="playAudioTrack('dvojina', this)" title="Poslušaj izgovorjavo" 
+              class="px-2 py-1 rounded border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 text-xs font-medium text-zinc-900 dark:text-zinc-100 flex items-center gap-1 transition-colors">
+              <i class="fa-solid fa-volume-high text-[11px]"></i>
+              <span id="dvojina-audio-label">Zvok</span>
+            </button>
+          </div>
+          <div>
+            <div class="text-xl font-bold text-zinc-900 dark:text-zinc-100 tabular-nums" id="card-dvojina-val">--</div>
+            <div class="font-mono text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5" id="card-dvojina-phonemic"></div>
+            <p class="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5" id="card-dvojina-sub">Natančno 2 enoti</p>
+          </div>
+        </div>
+
+        <!-- 3. Mnozina Card -->
+        <div class="bg-white dark:bg-[#121215] rounded-lg p-4 border border-zinc-200 dark:border-zinc-800 flex flex-col justify-between">
+          <div class="flex justify-between items-start mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider text-zinc-500" id="card-mnozina-title">
+              3. Množina
+            </span>
+            <button id="mnozina-audio-btn" onclick="playAudioTrack('mnozina', this)" title="Poslušaj izgovorjavo" 
+              class="px-2 py-1 rounded border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-xs font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-1 transition-colors">
+              <i class="fa-solid fa-volume-high text-[11px]"></i>
+              <span id="mnozina-audio-label">Zvok</span>
+            </button>
+          </div>
+          <div>
+            <div class="text-xl font-bold text-zinc-900 dark:text-zinc-100 tabular-nums" id="card-mnozina-val">--</div>
+            <div class="font-mono text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5" id="card-mnozina-phonemic"></div>
+            <p class="text-[11px] text-zinc-400 mt-0.5" id="card-mnozina-sub">3 ali več enot</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Full Declension Table -->
+      <div class="bg-white dark:bg-[#121215] rounded-lg p-4 sm:p-5 border border-zinc-200 dark:border-zinc-800 space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs sm:text-sm font-semibold text-zinc-900 dark:text-zinc-100" id="declension-title">
+            Sklanjatev (Vsi skloni)
+          </h3>
+          <span class="text-[11px] text-zinc-400" id="declension-hint">Klikni na katerokoli obliko za poslušanje</span>
+        </div>
+        
+        <div class="overflow-x-auto border border-zinc-200 dark:border-zinc-800 rounded-md">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-zinc-50 dark:bg-zinc-900/60 border-b border-zinc-200 dark:border-zinc-800 text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">
+                <th class="p-2.5" id="th-case">Sklon</th>
+                <th class="p-2.5" id="th-ednina">Ednina</th>
+                <th class="p-2.5 bg-zinc-100/60 dark:bg-zinc-800/40 text-zinc-900 dark:text-zinc-100 font-bold" id="th-dvojina">Dvojina</th>
+                <th class="p-2.5" id="th-mnozina">Množina</th>
+              </tr>
+            </thead>
+            <tbody id="declension-table-body" class="divide-y divide-zinc-100 dark:divide-zinc-800 font-normal">
+              <!-- Rows injected dynamically via JS -->
+            </tbody>
+          </table>
+        </div>
+        
+        <!-- Grammar tip (Sanzo Wada warm mineral / ochre tint) -->
+        <div class="p-3 bg-amber-50/60 dark:bg-amber-950/20 text-amber-900 dark:text-amber-200 rounded-md text-xs flex gap-2 border border-amber-200/50 dark:border-amber-900/40 items-start">
+          <i class="fa-solid fa-circle-info text-amber-700 dark:text-amber-400 mt-0.5 text-xs"></i>
+          <div>
+            <div class="font-semibold text-[11px] uppercase tracking-wider text-amber-800 dark:text-amber-300" id="grammar-tip-title">Slovnični napotek</div>
+            <p id="grammar-tip" class="text-xs text-amber-900/80 dark:text-amber-200/80 mt-0.5">Napotek za izbrano besedo.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Dual Practice Card (Soft Diacritic Tolerance & Character Diff) -->
+      <div id="practice-card" class="bg-white dark:bg-[#121215] rounded-lg p-4 sm:p-5 border border-zinc-200 dark:border-zinc-800 space-y-3">
+        <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-2.5">
+          <div class="flex items-center gap-2">
+            <span class="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 uppercase" id="practice-badge">Vaja</span>
+            <h3 class="text-xs sm:text-sm font-semibold text-zinc-900 dark:text-zinc-100" id="practice-title">
+              Vadi dvojino za to besedo
+            </h3>
+          </div>
+          <span class="text-[11px] text-zinc-400 font-mono" id="practice-hint">Preveri znanje dvojine</span>
+        </div>
+
+        <div class="space-y-2.5">
+          <p class="text-xs text-zinc-600 dark:text-zinc-400" id="practice-prompt-text">
+            Vpišite obliko za dvojino za besedo: <strong id="practice-target-word" class="text-zinc-900 dark:text-zinc-100">--</strong>
+          </p>
+
+          <div class="flex gap-2">
+            <input type="text" id="practice-input" 
+              class="block flex-1 px-3 py-1.5 bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200 dark:border-zinc-800 rounded-md text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-600" 
+              placeholder="Vpiši dvojino (npr. dva psa)..." autocomplete="off" onkeypress="handlePracticeEnter(event)">
+            <button onclick="checkPracticeAnswer()" id="practice-check-btn"
+              class="bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-medium py-1.5 px-3.5 rounded-md text-xs transition-colors flex items-center gap-1.5 whitespace-nowrap">
+              <span id="practice-check-label">Preveri</span>
+              <i class="fa-solid fa-check text-[11px]"></i>
+            </button>
+          </div>
+
+          <!-- Practice Result Feedback Box with Granular Character Diffs -->
+          <div id="practice-feedback" class="hidden p-3 rounded-md text-xs space-y-2">
+            <!-- Dynamically rendered feedback with character-level diffs -->
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Language Selection Modal (Overlay) -->
+  <div id="lang-modal" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 hidden transition-opacity">
+    <div class="bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 rounded-lg max-w-xl w-full p-5 shadow-lg space-y-4">
+      
+      <div class="flex items-start justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
+        <div>
+          <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100" id="modal-title">Izberite jezik vmesnika</h3>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5" id="modal-desc">
+            Izberite jezik v katerem želite uporabljati aplikacijo in prevajati v slovenščino.
+          </p>
+        </div>
+        <button onclick="closeLangModal()" class="text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 p-1" title="Zapri">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <!-- Languages Grid -->
+      <div class="grid grid-cols-2 gap-2 max-h-[60vh] overflow-y-auto pr-1">
+        
+        <button onclick="selectLanguage('sr')" class="lang-option p-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 flex items-center gap-2.5 transition-colors text-left group">
+          <span class="w-7 h-5 flex items-center justify-center font-mono text-[10px] font-bold rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">SR</span>
+          <div>
+            <div class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Srpski</div>
+            <div class="text-[10px] text-zinc-400">latinica</div>
+          </div>
+        </button>
+
+        <button onclick="selectLanguage('en')" class="lang-option p-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 flex items-center gap-2.5 transition-colors text-left group">
+          <span class="w-7 h-5 flex items-center justify-center font-mono text-[10px] font-bold rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">EN</span>
+          <div>
+            <div class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">English</div>
+            <div class="text-[10px] text-zinc-400">English</div>
+          </div>
+        </button>
+
+        <button onclick="selectLanguage('hr')" class="lang-option p-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 flex items-center gap-2.5 transition-colors text-left group">
+          <span class="w-7 h-5 flex items-center justify-center font-mono text-[10px] font-bold rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">HR</span>
+          <div>
+            <div class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Hrvatski</div>
+            <div class="text-[10px] text-zinc-400">Hrvatski</div>
+          </div>
+        </button>
+
+        <button onclick="selectLanguage('bs')" class="lang-option p-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 flex items-center gap-2.5 transition-colors text-left group">
+          <span class="w-7 h-5 flex items-center justify-center font-mono text-[10px] font-bold rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">BS</span>
+          <div>
+            <div class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Bosanski</div>
+            <div class="text-[10px] text-zinc-400">Bosanski</div>
+          </div>
+        </button>
+
+        <button onclick="selectLanguage('de')" class="lang-option p-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 flex items-center gap-2.5 transition-colors text-left group">
+          <span class="w-7 h-5 flex items-center justify-center font-mono text-[10px] font-bold rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">DE</span>
+          <div>
+            <div class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Deutsch</div>
+            <div class="text-[10px] text-zinc-400">Deutsch</div>
+          </div>
+        </button>
+
+        <button onclick="selectLanguage('it')" class="lang-option p-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 flex items-center gap-2.5 transition-colors text-left group">
+          <span class="w-7 h-5 flex items-center justify-center font-mono text-[10px] font-bold rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">IT</span>
+          <div>
+            <div class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Italiano</div>
+            <div class="text-[10px] text-zinc-400">Italiano</div>
+          </div>
+        </button>
+
+        <button onclick="selectLanguage('es')" class="lang-option p-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 flex items-center gap-2.5 transition-colors text-left group">
+          <span class="w-7 h-5 flex items-center justify-center font-mono text-[10px] font-bold rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">ES</span>
+          <div>
+            <div class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Español</div>
+            <div class="text-[10px] text-zinc-400">Español</div>
+          </div>
+        </button>
+
+        <button onclick="selectLanguage('fr')" class="lang-option p-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 flex items-center gap-2.5 transition-colors text-left group">
+          <span class="w-7 h-5 flex items-center justify-center font-mono text-[10px] font-bold rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">FR</span>
+          <div>
+            <div class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Français</div>
+            <div class="text-[10px] text-zinc-400">Français</div>
+          </div>
+        </button>
+
+        <button onclick="selectLanguage('ru')" class="lang-option p-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 flex items-center gap-2.5 transition-colors text-left group">
+          <span class="w-7 h-5 flex items-center justify-center font-mono text-[10px] font-bold rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">RU</span>
+          <div>
+            <div class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Русский</div>
+            <div class="text-[10px] text-zinc-400">Русский</div>
+          </div>
+        </button>
+
+        <button onclick="selectLanguage('sl')" class="lang-option p-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 flex items-center gap-2.5 transition-colors text-left group">
+          <span class="w-7 h-5 flex items-center justify-center font-mono text-[10px] font-bold rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">SL</span>
+          <div>
+            <div class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Slovenščina</div>
+            <div class="text-[10px] text-zinc-400">Slovenščina</div>
+          </div>
+        </button>
+
+      </div>
+
+      <div class="pt-2 border-t border-zinc-100 dark:border-zinc-800 flex justify-end">
+        <button onclick="closeLangModal()" class="px-3 py-1.5 rounded-md border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-medium transition-colors">
+          Zapri / Close
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Phonemic Legend Modal (IPA & SSKJ Accents) -->
+  <div id="phonemic-modal" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 hidden transition-opacity">
+    <div class="bg-white dark:bg-[#121215] border border-zinc-200 dark:border-zinc-800 rounded-lg max-w-lg w-full p-5 shadow-lg space-y-4">
+      
+      <div class="flex items-start justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
+        <div>
+          <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100" id="phonemic-modal-title">Slovenski fonemski zapis in naglasi</h3>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5" id="phonemic-modal-desc">
+            Vodič po naglasnih znamenjih SSKJ in Mednarodni fonetični abecedi (IPA).
+          </p>
+        </div>
+        <button onclick="closePhonemicModal()" class="text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 p-1" title="Zapri">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs max-h-[60vh] overflow-y-auto pr-1">
+        <div class="border border-zinc-200 dark:border-zinc-800 rounded-md overflow-hidden">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-zinc-50 dark:bg-zinc-900/60 border-b border-zinc-200 dark:border-zinc-800 text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">
+              <tr>
+                <th class="p-2.5">Znak</th>
+                <th class="p-2.5">Pomen / Izgovor</th>
+                <th class="p-2.5">Primer</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800 font-mono text-[11px]">
+              <tr>
+                <td class="p-2.5 font-bold text-zinc-900 dark:text-zinc-100">á, é, í, ó, ú</td>
+                <td class="p-2.5 font-sans text-zinc-600 dark:text-zinc-400">Dolgi naglašeni samoglasnik (oster naglas)</td>
+                <td class="p-2.5 text-zinc-700 dark:text-zinc-300">híša [ˈxiːʃa]</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-zinc-900 dark:text-zinc-100">à, è, ì, ò, ù</td>
+                <td class="p-2.5 font-sans text-zinc-600 dark:text-zinc-400">Kratki naglašeni samoglasnik (kratec)</td>
+                <td class="p-2.5 text-zinc-700 dark:text-zinc-300">bràt [brat]</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-zinc-900 dark:text-zinc-100">ê, ô</td>
+                <td class="p-2.5 font-sans text-zinc-600 dark:text-zinc-400">Dolgi široki [ɛː] ali [ɔː] (cirkumfleks)</td>
+                <td class="p-2.5 text-zinc-700 dark:text-zinc-300">mêt [mɛːt]</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-zinc-900 dark:text-zinc-100">ə (polglasnik)</td>
+                <td class="p-2.5 font-sans text-zinc-600 dark:text-zinc-400">Schwa; neobstojni e ali ob zlogotvornem r</td>
+                <td class="p-2.5 text-zinc-700 dark:text-zinc-300">pès [pəs], vrt [ʋərt]</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-zinc-900 dark:text-zinc-100">ˈ (IPA)</td>
+                <td class="p-2.5 font-sans text-zinc-600 dark:text-zinc-400">Oznaka za primarni naglas pred zlogom</td>
+                <td class="p-2.5 text-zinc-700 dark:text-zinc-300">[ˈdɛlɔʋaːti]</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-zinc-900 dark:text-zinc-100">ː (IPA)</td>
+                <td class="p-2.5 font-sans text-zinc-600 dark:text-zinc-400">Oznaka za dolžino samoglasnika</td>
+                <td class="p-2.5 text-zinc-700 dark:text-zinc-300">[aː], [eː], [oː]</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-zinc-900 dark:text-zinc-100">u̯ (polvokal)</td>
+                <td class="p-2.5 font-sans text-zinc-600 dark:text-zinc-400">Izgovor deležnika na -l na koncu zloga</td>
+                <td class="p-2.5 text-zinc-700 dark:text-zinc-300">deloval [dɛlɔʋau̯]</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-zinc-900 dark:text-zinc-100">č, š, ž</td>
+                <td class="p-2.5 font-sans text-zinc-600 dark:text-zinc-400">Slovenske strešice: [tʃ], [ʃ], [ʒ]</td>
+                <td class="p-2.5 text-zinc-700 dark:text-zinc-300">človek [ˈtʃlɔʋɛk]</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-zinc-400 leading-relaxed font-sans">
+          Slovenski naglas je prost in jakosten. Naglasna mesta v SloDvojina temeljijo na SSKJ in uradnih virih Inštituta za slovenski jezik Frana Ramovša ZRC SAZU (Fran.si).
+        </p>
+      </div>
+
+      <div class="flex justify-end pt-2 border-t border-zinc-100 dark:border-zinc-800">
+        <button onclick="closePhonemicModal()" class="px-3 py-1.5 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-medium hover:opacity-90 transition-opacity">
+          Razumem
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // i18n Definitions for 10 languages
+    const i18nData = {
+      sr: {
+        flag: "🇷🇸",
+        name: "Srpski",
+        headerSubtitle: "Generator dvojine i prevodilac sa PONS zvukom",
+        dirAuto: "Automatsko prepoznavanje",
+        searchTitle: "Pretraži reč ili celu rečenicu",
+        searchDesc: "Upišite reč na srpskom, slovenačkom ili celu rečenicu.",
+        placeholder: "Upiši reč ili rečenicu (npr. pas, Ja putujem u Ljubljanu)...",
+        analyzeBtn: "Analiziraj",
+        analyzing: "Analiziram i prevodim...",
+        sentenceBadge: "Prevod rečenice",
+        sentencePlay: "Prirodni glas (1.0x)",
+        sentenceSlow: "Sporo (0.75x)",
+        sentenceMeaning: "Značenje / Prevod:",
+        tokenTitle: "Analiza reči u rečenici:",
+        tokenSub: "(kliknite na reč da vidite dvojinu i padeže)",
+        meaningLabel: "Značenje:",
+        genderInfo: "Rod",
+        genders: { "Moški spol": "Muški rod", "Ženski spol": "Ženski rod", "Srednji spol": "Srednji rod" },
+        cardEdninaTitle: "1. Jednina",
+        cardEdninaSub: "Jedna jedinica",
+        cardDvojinaTitle: "2. Dvojina (Posebnost)",
+        cardDvojinaSub: "Tačno 2 jedinice",
+        cardMnozinaTitle: "3. Množina",
+        cardMnozinaSub: "3 ili više jedinica",
+        ponsSound: "PONS Zvuk",
+        naturalVoice: "Prirodni glas",
+        declensionTitle: "Deklinacija (Svi padeži)",
+        declensionHint: "Kliknite na bilo koji oblik za slušanje",
+        thCase: "Padež",
+        thEdnina: "Jednina",
+        thDvojina: "Dvojina",
+        thMnozina: "Množina",
+        grammarTipTitle: "Gramatička napomena",
+        chips: [
+          { label: "delovati (glagol)", query: "delovati" },
+          { label: "pas", query: "pas" },
+          { label: "kuća", query: "kuća" },
+          { label: "dete", query: "dete" },
+          { label: "Ja putujem u Ljubljanu", query: "Ja putujem u Ljubljanu" },
+          { label: "Danas je lep sunčan dan", query: "Danas je lep sunčan dan" }
+        ],
+        cases: [
+          { id: 'imenovalnik', name: '1. Nominativ', question: 'Ko ili šta?' },
+          { id: 'rodilnik', name: '2. Genitiv', question: 'Koga ili čega?' },
+          { id: 'dajalnik', name: '3. Dativ', question: 'Kome ili čemu?' },
+          { id: 'tozilnik', name: '4. Akuzativ', question: 'Koga ili šta?' },
+          { id: 'mestnik', name: '5. Lokativ', question: 'O kome ili o čemu?' },
+          { id: 'orodnik', name: '6. Instrumental', question: 'S kim ili s čim?' }
+        ]
+      },
+      en: {
+        flag: "🇬🇧",
+        name: "English",
+        headerSubtitle: "Dual & Plural Generator with PONS Audio",
+        dirAuto: "Auto-detect",
+        searchTitle: "Search a word or full sentence",
+        searchDesc: "Enter an English word, a Slovenian word, or a full sentence.",
+        placeholder: "Enter a word or sentence (e.g. dog, I am traveling to Ljubljana)...",
+        analyzeBtn: "Analyze",
+        analyzing: "Analyzing and translating...",
+        sentenceBadge: "Sentence Translation",
+        sentencePlay: "Natural Voice (1.0x)",
+        sentenceSlow: "Slow (0.75x)",
+        sentenceMeaning: "Meaning / Translation:",
+        tokenTitle: "Sentence Word Breakdown:",
+        tokenSub: "(click any word to inspect dual & declension)",
+        meaningLabel: "Meaning:",
+        genderInfo: "Gender",
+        genders: { "Moški spol": "Masculine", "Ženski spol": "Feminine", "Srednji spol": "Neuter" },
+        cardEdninaTitle: "1. Singular",
+        cardEdninaSub: "One item",
+        cardDvojinaTitle: "2. Dual (Special form)",
+        cardDvojinaSub: "Exactly 2 items",
+        cardMnozinaTitle: "3. Plural",
+        cardMnozinaSub: "3 or more items",
+        ponsSound: "PONS Audio",
+        naturalVoice: "Natural Voice",
+        declensionTitle: "Declension (All cases)",
+        declensionHint: "Click any form to hear pronunciation",
+        thCase: "Case",
+        thEdnina: "Singular",
+        thDvojina: "Dual",
+        thMnozina: "Plural",
+        grammarTipTitle: "Grammar note",
+        chips: [
+          { label: "to work (delovati)", query: "delovati" },
+          { label: "dog", query: "dog" },
+          { label: "house", query: "house" },
+          { label: "child", query: "child" },
+          { label: "I am traveling to Ljubljana", query: "I am traveling to Ljubljana" },
+          { label: "Today is a sunny day", query: "Today is a sunny day" }
+        ],
+        cases: [
+          { id: 'imenovalnik', name: '1. Nominative', question: 'Who or what?' },
+          { id: 'rodilnik', name: '2. Genitive', question: 'Whose or of what?' },
+          { id: 'dajalnik', name: '3. Dative', question: 'To or for whom?' },
+          { id: 'tozilnik', name: '4. Accusative', question: 'Whom or what?' },
+          { id: 'mestnik', name: '5. Locative', question: 'About whom or what?' },
+          { id: 'orodnik', name: '6. Instrumental', question: 'With whom or what?' }
+        ]
+      },
+      hr: {
+        flag: "🇭🇷",
+        name: "Hrvatski",
+        headerSubtitle: "Generator dvojine i prevoditelj s PONS zvukom",
+        dirAuto: "Automatsko prepoznavanje",
+        searchTitle: "Pretraži riječ ili cijelu rečenicu",
+        searchDesc: "Upišite riječ na hrvatskom, slovenskom ili cijelu rečenicu.",
+        placeholder: "Upiši riječ ili rečenicu (npr. pas, Putujem u Ljubljanu)...",
+        analyzeBtn: "Analiziraj",
+        analyzing: "Analiziram i prevodim...",
+        sentenceBadge: "Prijevod rečenice",
+        sentencePlay: "Prirodni glas (1.0x)",
+        sentenceSlow: "Sporo (0.75x)",
+        sentenceMeaning: "Značenje / Prijevod:",
+        tokenTitle: "Analiza riječi u rečenici:",
+        tokenSub: "(kliknite na riječ za pregled dvojine i padeža)",
+        meaningLabel: "Značenje:",
+        genderInfo: "Rod",
+        genders: { "Moški spol": "Muški rod", "Ženski spol": "Ženski rod", "Srednji spol": "Srednji rod" },
+        cardEdninaTitle: "1. Jednina",
+        cardEdninaSub: "Jedna jedinica",
+        cardDvojinaTitle: "2. Dvojina (Posebnost)",
+        cardDvojinaSub: "Točno 2 jedinice",
+        cardMnozinaTitle: "3. Množina",
+        cardMnozinaSub: "3 ili više jedinica",
+        ponsSound: "PONS Zvuk",
+        naturalVoice: "Prirodni glas",
+        declensionTitle: "Deklinacija (Svi padeži)",
+        declensionHint: "Kliknite na bilo koji oblik za slušanje",
+        thCase: "Padež",
+        thEdnina: "Jednina",
+        thDvojina: "Dvojina",
+        thMnozina: "Množina",
+        grammarTipTitle: "Gramatička napomena",
+        chips: [
+          { label: "pas", query: "pas" },
+          { label: "kuća", query: "kuća" },
+          { label: "dijete", query: "dijete" },
+          { label: "Putujem u Ljubljanu", query: "Putujem u Ljubljanu" }
+        ],
+        cases: [
+          { id: 'imenovalnik', name: '1. Nominativ', question: 'Tko ili što?' },
+          { id: 'rodilnik', name: '2. Genitiv', question: 'Koga ili čega?' },
+          { id: 'dajalnik', name: '3. Dativ', question: 'Komu ili čemu?' },
+          { id: 'tozilnik', name: '4. Akuzativ', question: 'Koga ili što?' },
+          { id: 'mestnik', name: '5. Lokativ', question: 'O komu ili o čemu?' },
+          { id: 'orodnik', name: '6. Instrumental', question: 'S kim ili s čim?' }
+        ]
+      },
+      bs: {
+        flag: "🇧🇦",
+        name: "Bosanski",
+        headerSubtitle: "Generator dvojine i prevodilac sa PONS zvukom",
+        dirAuto: "Automatsko prepoznavanje",
+        searchTitle: "Pretraži riječ ili cijelu rečenicu",
+        searchDesc: "Upišite riječ na bosanskom, slovenskom ili cijelu rečenicu.",
+        placeholder: "Upiši riječ ili rečenicu (npr. pas, Ja putujem u Ljubljanu)...",
+        analyzeBtn: "Analiziraj",
+        analyzing: "Analiziram i prevodim...",
+        sentenceBadge: "Prevod rečenice",
+        sentencePlay: "Prirodni glas (1.0x)",
+        sentenceSlow: "Sporo (0.75x)",
+        sentenceMeaning: "Značenje / Prevod:",
+        tokenTitle: "Analiza riječi u rečenici:",
+        tokenSub: "(kliknite na riječ za pregled dvojine i padeža)",
+        meaningLabel: "Značenje:",
+        genderInfo: "Rod",
+        genders: { "Moški spol": "Muški rod", "Ženski spol": "Ženski rod", "Srednji spol": "Srednji rod" },
+        cardEdninaTitle: "1. Jednina",
+        cardEdninaSub: "Jedna jedinica",
+        cardDvojinaTitle: "2. Dvojina (Posebnost)",
+        cardDvojinaSub: "Tačno 2 jedinice",
+        cardMnozinaTitle: "3. Množina",
+        cardMnozinaSub: "3 ili više jedinica",
+        ponsSound: "PONS Zvuk",
+        naturalVoice: "Prirodni glas",
+        declensionTitle: "Deklinacija (Svi padeži)",
+        declensionHint: "Kliknite na bilo koji oblik za slušanje",
+        thCase: "Padež",
+        thEdnina: "Jednina",
+        thDvojina: "Dvojina",
+        thMnozina: "Množina",
+        grammarTipTitle: "Gramatička napomena",
+        chips: [
+          { label: "pas", query: "pas" },
+          { label: "kuća", query: "kuća" },
+          { label: "dijete", query: "dijete" },
+          { label: "Ja putujem u Ljubljanu", query: "Ja putujem u Ljubljanu" }
+        ],
+        cases: [
+          { id: 'imenovalnik', name: '1. Nominativ', question: 'Ko ili šta?' },
+          { id: 'rodilnik', name: '2. Genitiv', question: 'Koga ili čega?' },
+          { id: 'dajalnik', name: '3. Dativ', question: 'Kome ili čemu?' },
+          { id: 'tozilnik', name: '4. Akuzativ', question: 'Koga ili šta?' },
+          { id: 'mestnik', name: '5. Lokativ', question: 'O kome ili o čemu?' },
+          { id: 'orodnik', name: '6. Instrumental', question: 'S kim ili s čim?' }
+        ]
+      },
+      de: {
+        flag: "🇩🇪",
+        name: "Deutsch",
+        headerSubtitle: "Dual- & Pluralgenerator mit PONS-Audio",
+        dirAuto: "Automatische Erkennung",
+        searchTitle: "Wort oder ganzen Satz suchen",
+        searchDesc: "Geben Sie ein deutsches oder slowenisches Wort oder einen ganzen Satz ein.",
+        placeholder: "Wort oder Satz eingeben (z. B. Hund, Ich reise nach Ljubljana)...",
+        analyzeBtn: "Analysieren",
+        analyzing: "Analysiere und übersetze...",
+        sentenceBadge: "Satzübersetzung",
+        sentencePlay: "Natürliche Stimme (1.0x)",
+        sentenceSlow: "Langsam (0.75x)",
+        sentenceMeaning: "Bedeutung / Übersetzung:",
+        tokenTitle: "Wortanalyse im Satz:",
+        tokenSub: "(Klicken Sie auf ein Wort für Dual & Deklination)",
+        meaningLabel: "Bedeutung:",
+        genderInfo: "Geschlecht",
+        genders: { "Moški spol": "Maskulinum (m)", "Ženski spol": "Femininum (w)", "Srednji spol": "Neutrum (s)" },
+        cardEdninaTitle: "1. Einzahl (Singular)",
+        cardEdninaSub: "Eine Einheit",
+        cardDvojinaTitle: "2. Dual (Zweizahl)",
+        cardDvojinaSub: "Genau 2 Einheiten",
+        cardMnozinaTitle: "3. Mehrzahl (Plural)",
+        cardMnozinaSub: "3 oder mehr Einheiten",
+        ponsSound: "PONS Audio",
+        naturalVoice: "Natürliche Stimme",
+        declensionTitle: "Deklination (Alle Fälle)",
+        declensionHint: "Klicken Sie auf eine beliebige Form zum Anhören",
+        thCase: "Fall",
+        thEdnina: "Singular",
+        thDvojina: "Dual",
+        thMnozina: "Plural",
+        grammarTipTitle: "Grammatik-Hinweis",
+        chips: [
+          { label: "Hund", query: "Hund" },
+          { label: "Haus", query: "Haus" },
+          { label: "Kind", query: "Kind" },
+          { label: "Ich fahre nach Ljubljana", query: "Ich fahre nach Ljubljana" }
+        ],
+        cases: [
+          { id: 'imenovalnik', name: '1. Nominativ', question: 'Wer oder was?' },
+          { id: 'rodilnik', name: '2. Genitiv', question: 'Wessen?' },
+          { id: 'dajalnik', name: '3. Dativ', question: 'Wem oder was?' },
+          { id: 'tozilnik', name: '4. Akkusativ', question: 'Wen oder was?' },
+          { id: 'mestnik', name: '5. Lokativ', question: 'Über wen oder was?' },
+          { id: 'orodnik', name: '6. Instrumental', question: 'Mit wem oder was?' }
+        ]
+      },
+      it: {
+        flag: "🇮🇹",
+        name: "Italiano",
+        headerSubtitle: "Generatore di duale & plurale con audio PONS",
+        dirAuto: "Rilevamento automatico",
+        searchTitle: "Cerca una parola o una frase",
+        searchDesc: "Inserisci una parola in italiano, in sloveno o un'intera frase.",
+        placeholder: "Inserisci una parola o frase (es. cane, Io viaggio a Lubiana)...",
+        analyzeBtn: "Analizza",
+        analyzing: "Analisi e traduzione in corso...",
+        sentenceBadge: "Traduzione della frase",
+        sentencePlay: "Voce naturale (1.0x)",
+        sentenceSlow: "Lento (0.75x)",
+        sentenceMeaning: "Significato / Traduzione:",
+        tokenTitle: "Analisi delle parole nella frase:",
+        tokenSub: "(clicca su una parola per vedere il duale e i casi)",
+        meaningLabel: "Significato:",
+        genderInfo: "Genere",
+        genders: { "Moški spol": "Maschile", "Ženski spol": "Femminile", "Srednji spol": "Neutro" },
+        cardEdninaTitle: "1. Singolare",
+        cardEdninaSub: "Una unità",
+        cardDvojinaTitle: "2. Duale (Forma speciale)",
+        cardDvojinaSub: "Esattamente 2 unità",
+        cardMnozinaTitle: "3. Plurale",
+        cardMnozinaSub: "3 o più unità",
+        ponsSound: "Audio PONS",
+        naturalVoice: "Voce naturale",
+        declensionTitle: "Declinazione (Tutti i casi)",
+        declensionHint: "Clicca su qualsiasi forma per ascoltare",
+        thCase: "Caso",
+        thEdnina: "Singolare",
+        thDvojina: "Duale",
+        thMnozina: "Plurale",
+        grammarTipTitle: "Nota grammaticale",
+        chips: [
+          { label: "cane", query: "cane" },
+          { label: "casa", query: "casa" },
+          { label: "bambino", query: "bambino" },
+          { label: "Viaggio a Lubiana", query: "Viaggio a Lubiana" }
+        ],
+        cases: [
+          { id: 'imenovalnik', name: '1. Nominativo', question: 'Chi o che cosa?' },
+          { id: 'rodilnik', name: '2. Genitivo', question: 'Di chi o di che cosa?' },
+          { id: 'dajalnik', name: '3. Dativo', question: 'A chi o a che cosa?' },
+          { id: 'tozilnik', name: '4. Accusativo', question: 'Chi o che cosa?' },
+          { id: 'mestnik', name: '5. Locativo', question: 'Di chi o su che cosa?' },
+          { id: 'orodnik', name: '6. Strumentale', question: 'Con chi o con che cosa?' }
+        ]
+      },
+      es: {
+        flag: "🇪🇸",
+        name: "Español",
+        headerSubtitle: "Generador de dual & plural con audio PONS",
+        dirAuto: "Detección automática",
+        searchTitle: "Buscar palabra o frase completa",
+        searchDesc: "Escribe una palabra en español, en esloveno o una frase completa.",
+        placeholder: "Escribe una palabra o frase (ej. perro, Viajo a Liubliana)...",
+        analyzeBtn: "Analizar",
+        analyzing: "Analizando y traduciendo...",
+        sentenceBadge: "Traducción de frase",
+        sentencePlay: "Voz natural (1.0x)",
+        sentenceSlow: "Lento (0.75x)",
+        sentenceMeaning: "Significado / Traducción:",
+        tokenTitle: "Desglose de palabras en la frase:",
+        tokenSub: "(haz clic en una palabra para ver el dual y la declinación)",
+        meaningLabel: "Significado:",
+        genderInfo: "Género",
+        genders: { "Moški spol": "Masculino", "Ženski spol": "Femenino", "Srednji spol": "Neutro" },
+        cardEdninaTitle: "1. Singular",
+        cardEdninaSub: "Una unidad",
+        cardDvojinaTitle: "2. Dual (Forma especial)",
+        cardDvojinaSub: "Exactamente 2 unidades",
+        cardMnozinaTitle: "3. Plural",
+        cardMnozinaSub: "3 o más unidades",
+        ponsSound: "Audio PONS",
+        naturalVoice: "Voz natural",
+        declensionTitle: "Declinación (Todos los casos)",
+        declensionHint: "Haz clic en cualquier forma para escuchar",
+        thCase: "Caso",
+        thEdnina: "Singular",
+        thDvojina: "Dual",
+        thMnozina: "Plural",
+        grammarTipTitle: "Nota gramatical",
+        chips: [
+          { label: "perro", query: "perro" },
+          { label: "casa", query: "casa" },
+          { label: "niño", query: "niño" },
+          { label: "Viajo a Liubliana", query: "Viajo a Liubliana" }
+        ],
+        cases: [
+          { id: 'imenovalnik', name: '1. Nominativo', question: '¿Quién o qué?' },
+          { id: 'rodilnik', name: '2. Genitivo', question: '¿De quién o de qué?' },
+          { id: 'dajalnik', name: '3. Dativo', question: '¿A quién o para quién?' },
+          { id: 'tozilnik', name: '4. Acusativo', question: '¿A quién o qué?' },
+          { id: 'mestnik', name: '5. Locativo', question: '¿Sobre quién o qué?' },
+          { id: 'orodnik', name: '6. Instrumental', question: '¿Con quién o con qué?' }
+        ]
+      },
+      fr: {
+        flag: "🇫🇷",
+        name: "Français",
+        headerSubtitle: "Générateur de duel & pluriel avec audio PONS",
+        dirAuto: "Détection automatique",
+        searchTitle: "Rechercher un mot ou une phrase",
+        searchDesc: "Entrez un mot en français, en slovène ou une phrase entière.",
+        placeholder: "Entrez un mot ou une phrase (ex. chien, Je voyage à Ljubljana)...",
+        analyzeBtn: "Analyser",
+        analyzing: "Analyse et traduction en cours...",
+        sentenceBadge: "Traduction de phrase",
+        sentencePlay: "Voix naturelle (1.0x)",
+        sentenceSlow: "Lent (0.75x)",
+        sentenceMeaning: "Sens / Traduction :",
+        tokenTitle: "Décomposition des mots :",
+        tokenSub: "(cliquez sur un mot pour voir le duel et les cas)",
+        meaningLabel: "Sens :",
+        genderInfo: "Genre",
+        genders: { "Moški spol": "Masculin", "Ženski spol": "Féminin", "Srednji spol": "Neutre" },
+        cardEdninaTitle: "1. Singulier",
+        cardEdninaSub: "Une unité",
+        cardDvojinaTitle: "2. Duel (Forme spéciale)",
+        cardDvojinaSub: "Exactement 2 unités",
+        cardMnozinaTitle: "3. Pluriel",
+        cardMnozinaSub: "3 ou plus unités",
+        ponsSound: "Audio PONS",
+        naturalVoice: "Voix naturelle",
+        declensionTitle: "Déclinaison (Tous les cas)",
+        declensionHint: "Cliquez sur une forme pour l'écouter",
+        thCase: "Cas",
+        thEdnina: "Singulier",
+        thDvojina: "Duel",
+        thMnozina: "Pluriel",
+        grammarTipTitle: "Note grammaticale",
+        chips: [
+          { label: "chien", query: "chien" },
+          { label: "maison", query: "maison" },
+          { label: "enfant", query: "enfant" },
+          { label: "Je voyage à Ljubljana", query: "Je voyage à Ljubljana" }
+        ],
+        cases: [
+          { id: 'imenovalnik', name: '1. Nominatif', question: 'Qui ou quoi ?' },
+          { id: 'rodilnik', name: '2. Génitif', question: 'De qui ou de quoi ?' },
+          { id: 'dajalnik', name: '3. Datif', question: 'À qui ou à quoi ?' },
+          { id: 'tozilnik', name: '4. Accusatif', question: 'Qui ou quoi ?' },
+          { id: 'mestnik', name: '5. Locatif', question: 'De qui ou sur quoi ?' },
+          { id: 'orodnik', name: '6. Instrumental', question: 'Avec qui ou quoi ?' }
+        ]
+      },
+      ru: {
+        flag: "🇷🇺",
+        name: "Русский",
+        headerSubtitle: "Генератор двойственного и множественного числа с аудио PONS",
+        dirAuto: "Автоопределение",
+        searchTitle: "Поиск слова или целого предложения",
+        searchDesc: "Введите слово на русском, словенском или целое предложение.",
+        placeholder: "Введите слово или предложение (напр. собака, Я еду в Любляну)...",
+        analyzeBtn: "Анализировать",
+        analyzing: "Анализирую и перевожу...",
+        sentenceBadge: "Перевод предложения",
+        sentencePlay: "Естественный голос (1.0x)",
+        sentenceSlow: "Медленно (0.75x)",
+        sentenceMeaning: "Значение / Перевод:",
+        tokenTitle: "Разбор слов в предложении:",
+        tokenSub: "(нажмите на слово для просмотра двойственного числа и падежей)",
+        meaningLabel: "Значение:",
+        genderInfo: "Род",
+        genders: { "Moški spol": "Мужской род", "Ženski spol": "Женский род", "Srednji spol": "Средний род" },
+        cardEdninaTitle: "1. Единственное",
+        cardEdninaSub: "Одна единица",
+        cardDvojinaTitle: "2. Двойственное (Особенность)",
+        cardDvojinaSub: "Ровно 2 единицы",
+        cardMnozinaTitle: "3. Множественное",
+        cardMnozinaSub: "3 или более единиц",
+        ponsSound: "Аудио PONS",
+        naturalVoice: "Естественный голос",
+        declensionTitle: "Склонение (Все падежи)",
+        declensionHint: "Нажмите на любую форму, чтобы послушать",
+        thCase: "Падеж",
+        thEdnina: "Единственное",
+        thDvojina: "Двойственное",
+        thMnozina: "Множественное",
+        grammarTipTitle: "Грамматическая подсказка",
+        chips: [
+          { label: "собака", query: "собака" },
+          { label: "дом", query: "дом" },
+          { label: "ребенок", query: "ребенок" },
+          { label: "Я еду в Любляну", query: "Я еду в Любляну" }
+        ],
+        cases: [
+          { id: 'imenovalnik', name: '1. Именительный', question: 'Кто или что?' },
+          { id: 'rodilnik', name: '2. Родительный', question: 'Кого или чего?' },
+          { id: 'dajalnik', name: '3. Дательный', question: 'Кому или чему?' },
+          { id: 'tozilnik', name: '4. Винительный', question: 'Кого или что?' },
+          { id: 'mestnik', name: '5. Предложный', question: 'О ком или о чём?' },
+          { id: 'orodnik', name: '6. Творительный', question: 'Кем или чем?' }
+        ]
+      },
+      sl: {
+        flag: "🇸🇮",
+        name: "Slovenščina",
+        headerSubtitle: "Generator dvojine in množine s PONS zvokom",
+        dirAuto: "Samodejno zaznavanje",
+        searchTitle: "Poišči besedo ali cel stavek",
+        searchDesc: "Vpiši slovensko besedo, tujo besedo ali cel stavek.",
+        placeholder: "Vpiši besedo ali stavek (npr. pes, Danes potujem v Ljubljano)...",
+        analyzeBtn: "Analiziraj",
+        analyzing: "Analiziram in preverjam PONS izgovorjavo...",
+        sentenceBadge: "Prevod stavka",
+        sentencePlay: "Naravni glas (1.0x)",
+        sentenceSlow: "Počasno (0.75x)",
+        sentenceMeaning: "Pomen / Prevod:",
+        tokenTitle: "Razčlemba besed v stavku:",
+        tokenSub: "(klikni besedo za dvojino in sklanjanje)",
+        meaningLabel: "Pomen:",
+        genderInfo: "Spol",
+        genders: { "Moški spol": "Moški spol", "Ženski spol": "Ženski spol", "Srednji spol": "Srednji spol" },
+        cardEdninaTitle: "1. Ednina",
+        cardEdninaSub: "Ena enota",
+        cardDvojinaTitle: "2. Dvojina (Posebnost)",
+        cardDvojinaSub: "Natančno 2 enoti",
+        cardMnozinaTitle: "3. Množina",
+        cardMnozinaSub: "3 ali več enot",
+        ponsSound: "PONS Zvok",
+        naturalVoice: "Naravni glas",
+        declensionTitle: "Sklanjatev (Vsi skloni)",
+        declensionHint: "Klikni na katerokoli obliko za poslušanje",
+        thCase: "Sklon",
+        thEdnina: "Ednina",
+        thDvojina: "Dvojina",
+        thMnozina: "Množina",
+        grammarTipTitle: "Slovnični napotek",
+        chips: [
+          { label: "pes", query: "pes" },
+          { label: "hiša", query: "hiša" },
+          { label: "otrok", query: "otrok" },
+          { label: "Potujem v Ljubljano", query: "Potujem v Ljubljano" }
+        ],
+        cases: [
+          { id: 'imenovalnik', name: '1. Imenovalnik', question: 'Kdo ali kaj?' },
+          { id: 'rodilnik', name: '2. Rodilnik', question: 'Koga ali česa?' },
+          { id: 'dajalnik', name: '3. Dajalnik', question: 'Komu ali čemu?' },
+          { id: 'tozilnik', name: '4. Tožilnik', question: 'Koga ali kaj?' },
+          { id: 'mestnik', name: '5. Mestnik', question: 'O kom ali o čem?' },
+          { id: 'orodnik', name: '6. Orodnik', question: 'S kom ali s čim?' }
+        ]
+      }
+    };
+
+    // Extended localization strings for Typo suggestions, Diacritic banners and Practice mode
+    const extraI18n = {
+      sr: {
+        didYouMean: "Da li ste mislili:",
+        showingResultsFor: "Prikazujem rezultate za",
+        correctedFrom: "popravljeno iz",
+        searchInstead: "Traži '{word}' bez ispravke",
+        practiceTitle: "Vežba za dvojinu",
+        practiceBadge: "Vežba",
+        practiceHint: "Proveri znanje dvojine",
+        practicePrompt: "Upišite oblik za dvojinu za reč:",
+        practicePlaceholder: "npr. dva psa...",
+        practiceCheck: "Proveri",
+        practiceAlmost: "Skoro tačno — pazi na dijakritike (č, š, ž)!",
+        practiceCorrect: "Tačno! Odlično poznavanje dvojine.",
+        practiceWrong: "Nije tačno. Pravilan oblik je:",
+        practiceListen: "Poslušaj izgovor"
+      },
+      en: {
+        didYouMean: "Did you mean:",
+        showingResultsFor: "Showing results for",
+        correctedFrom: "corrected from",
+        searchInstead: "Search '{word}' instead",
+        practiceTitle: "Dual Practice",
+        practiceBadge: "Practice",
+        practiceHint: "Test your dual knowledge",
+        practicePrompt: "Type the dual form for the word:",
+        practicePlaceholder: "e.g. dva psa...",
+        practiceCheck: "Check",
+        practiceAlmost: "Almost correct — watch the diacritics (č, š, ž)!",
+        practiceCorrect: "Correct! Excellent dual mastery.",
+        practiceWrong: "Not quite. The correct dual form is:",
+        practiceListen: "Listen to pronunciation"
+      },
+      hr: {
+        didYouMean: "Jeste li mislili:",
+        showingResultsFor: "Prikazujem rezultate za",
+        correctedFrom: "ispravljeno iz",
+        searchInstead: "Traži '{word}' bez ispravka",
+        practiceTitle: "Vježba za dvojinu",
+        practiceBadge: "Vježba",
+        practiceHint: "Provjeri znanje dvojine",
+        practicePrompt: "Upišite oblik za dvojinu za riječ:",
+        practicePlaceholder: "npr. dva psa...",
+        practiceCheck: "Provjeri",
+        practiceAlmost: "Zamalo točno — pripazite na kvačice (č, š, ž)!",
+        practiceCorrect: "Točno! Izvrsno.",
+        practiceWrong: "Nije točno. Pravilan oblik je:",
+        practiceListen: "Poslušaj izgovor"
+      },
+      bs: {
+        didYouMean: "Da li ste mislili:",
+        showingResultsFor: "Prikazujem rezultate za",
+        correctedFrom: "ispravljeno iz",
+        searchInstead: "Traži '{word}' bez ispravke",
+        practiceTitle: "Vježba za dvojinu",
+        practiceBadge: "Vježba",
+        practiceHint: "Provjeri znanje dvojine",
+        practicePrompt: "Upišite oblik za dvojinu za riječ:",
+        practicePlaceholder: "npr. dva psa...",
+        practiceCheck: "Provjeri",
+        practiceAlmost: "Skoro tačno — pazi na kvačice (č, š, ž)!",
+        practiceCorrect: "Tačno! Odlično.",
+        practiceWrong: "Nije tačno. Pravilan oblik je:",
+        practiceListen: "Poslušaj izgovor"
+      },
+      de: {
+        didYouMean: "Meinten Sie:",
+        showingResultsFor: "Ergebnisse für",
+        correctedFrom: "korrigiert von",
+        searchInstead: "Trotzdem nach '{word}' suchen",
+        practiceTitle: "Dual-Übung",
+        practiceBadge: "Übung",
+        practiceHint: "Dual-Formen üben",
+        practicePrompt: "Geben Sie die Dualform ein für:",
+        practicePlaceholder: "z. B. dva psa...",
+        practiceCheck: "Prüfen",
+        practiceAlmost: "Fast richtig — achten Sie auf die Hatscheks (č, š, ž)!",
+        practiceCorrect: "Richtig! Ausgezeichnet.",
+        practiceWrong: "Nicht ganz. Die richtige Dualform lautet:",
+        practiceListen: "Aussprache anhören"
+      },
+      it: {
+        didYouMean: "Forse cercavi:",
+        showingResultsFor: "Risultati per",
+        correctedFrom: "corretto da",
+        searchInstead: "Cerca comunque '{word}'",
+        practiceTitle: "Esercizio sul duale",
+        practiceBadge: "Esercizio",
+        practiceHint: "Esercitati con il duale",
+        practicePrompt: "Inserisci la forma duale per:",
+        practicePlaceholder: "es. dva psa...",
+        practiceCheck: "Verifica",
+        practiceAlmost: "Quasi corretto — attenzione ai segni diacritici (č, š, ž)!",
+        practiceCorrect: "Esatto! Ottimo.",
+        practiceWrong: "Non esatto. La forma corretta è:",
+        practiceListen: "Ascolta pronuncia"
+      },
+      es: {
+        didYouMean: "¿Quiso decir:",
+        showingResultsFor: "Resultados para",
+        correctedFrom: "corregido de",
+        searchInstead: "Buscar de todos modos '{word}'",
+        practiceTitle: "Práctica de dual",
+        practiceBadge: "Práctica",
+        practiceHint: "Practica las formas duales",
+        practicePrompt: "Escriba la forma dual para:",
+        practicePlaceholder: "ej. dva psa...",
+        practiceCheck: "Comprobar",
+        practiceAlmost: "¡Casi correcto! Cuidado con los signos diacríticos (č, š, ž).",
+        practiceCorrect: "¡Correcto! Excelente.",
+        practiceWrong: "No es correcto. La forma dual es:",
+        practiceListen: "Escuchar pronunciación"
+      },
+      fr: {
+        didYouMean: "Vouliez-vous dire :",
+        showingResultsFor: "Résultats pour",
+        correctedFrom: "corrigé depuis",
+        searchInstead: "Rechercher quand même '{word}'",
+        practiceTitle: "Exercice sur le duel",
+        practiceBadge: "Exercice",
+        practiceHint: "S'entraîner sur le duel",
+        practicePrompt: "Entrez la forme du duel pour :",
+        practicePlaceholder: "ex. dva psa...",
+        practiceCheck: "Vérifier",
+        practiceAlmost: "Presque correct — attention aux signes diacritiques (č, š, ž) !",
+        practiceCorrect: "Correct ! Excellent.",
+        practiceWrong: "Pas tout à fait. La forme correcte est :",
+        practiceListen: "Écouter la prononciation"
+      },
+      ru: {
+        didYouMean: "Возможно, вы имели в виду:",
+        showingResultsFor: "Результаты для",
+        correctedFrom: "исправлено с",
+        searchInstead: "Искать всё равно '{word}'",
+        practiceTitle: "Упражнение на двойственное число",
+        practiceBadge: "Практика",
+        practiceHint: "Проверьте знание форм двойственного числа",
+        practicePrompt: "Введите форму двойственного числа для слова:",
+        practicePlaceholder: "напр. dva psa...",
+        practiceCheck: "Проверить",
+        practiceAlmost: "Почти правильно — обратите внимание на гачеки (č, š, ž)!",
+        practiceCorrect: "Правильно! Отлично.",
+        practiceWrong: "Не совсем так. Правильная форма:",
+        practiceListen: "Слушать произношение"
+      },
+      sl: {
+        didYouMean: "Ali ste mislili:",
+        showingResultsFor: "Prikazujem rezultate za",
+        correctedFrom: "popravljeno iz",
+        searchInstead: "Išči vseeno '{word}'",
+        practiceTitle: "Vaja za dvojino",
+        practiceBadge: "Vaja",
+        practiceHint: "Preveri znanje dvojine",
+        practicePrompt: "Vpišite pravilno obliko dvojine za besedo:",
+        practicePlaceholder: "npr. dva psa...",
+        practiceCheck: "Preveri",
+        practiceAlmost: "Skoraj pravilno — pazi na strešice (č, š, ž)!",
+        practiceCorrect: "Pravilno! Odlično poznavanje dvojine.",
+        practiceWrong: "Poskusi znova. Pravilna oblika je:",
+        practiceListen: "Poslušaj izgovor"
+      }
+    };
+    Object.keys(extraI18n).forEach(l => {
+      if (i18nData[l]) Object.assign(i18nData[l], extraI18n[l]);
+    });
+
+    // State
+    let currentLang = 'sr';
+    let currentAnalysis = null;
+    let activeAudio = null;
+    let currentSentenceAudio = null;
+
+    // Theme Switcher & Initialization
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Theme
+      const themeBtn = document.getElementById('theme-toggle');
+      const html = document.documentElement;
+      const themeIcon = document.getElementById('theme-icon');
+
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        html.classList.add('dark');
+        themeIcon.classList.replace('fa-moon', 'fa-sun');
+      }
+
+      themeBtn.addEventListener('click', () => {
+        html.classList.toggle('dark');
+        if (html.classList.contains('dark')) {
+          localStorage.theme = 'dark';
+          themeIcon.classList.replace('fa-moon', 'fa-sun');
+        } else {
+          localStorage.theme = 'light';
+          themeIcon.classList.replace('fa-sun', 'fa-moon');
+        }
+      });
+
+      // 2. Language check
+      const savedLang = localStorage.getItem('slodvojina_lang');
+      if (savedLang && i18nData[savedLang]) {
+        applyLanguage(savedLang);
+      } else {
+        // First visit: show language modal
+        openLangModal();
+        applyLanguage('sr'); // default preview
+      }
+
+      // 3. Clear button handler
+      const wordInput = document.getElementById('word-input');
+      const clearBtn = document.getElementById('clear-input-btn');
+      wordInput.addEventListener('input', () => {
+        if (wordInput.value.length > 0) {
+          clearBtn.classList.remove('hidden');
+        } else {
+          clearBtn.classList.add('hidden');
+        }
+      });
+    });
+
+    // Language Modal Functions
+    function openLangModal() {
+      document.getElementById('lang-modal').classList.remove('hidden');
+    }
+
+    function closeLangModal() {
+      document.getElementById('lang-modal').classList.add('hidden');
+    }
+
+    function selectLanguage(lang) {
+      if (!i18nData[lang]) return;
+      localStorage.setItem('slodvojina_lang', lang);
+      applyLanguage(lang);
+      closeLangModal();
+
+      // If results are currently showing, re-render them with new language
+      if (currentAnalysis) {
+        if (currentAnalysis.isSentence) {
+          renderSentenceUI(currentAnalysis);
+        } else {
+          renderWordUI(currentAnalysis);
+        }
+      }
+    }
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      const t = i18nData[lang] || i18nData.sr;
+      const langCode = (t.code || lang).toUpperCase();
+
+      // Header
+      document.getElementById('current-lang-flag').innerText = langCode;
+      document.getElementById('current-lang-name').innerText = t.name;
+      document.getElementById('header-subtitle').innerText = t.headerSubtitle;
+
+      // Direction Bar
+      document.getElementById('dir-from-flag').innerText = langCode;
+      document.getElementById('dir-from-name').innerText = t.name;
+      document.getElementById('dir-auto-tag').innerText = t.dirAuto;
+
+      // Search Section
+      document.getElementById('search-title').innerText = t.searchTitle;
+      document.getElementById('search-desc').innerText = t.searchDesc;
+      document.getElementById('word-input').placeholder = t.placeholder;
+      document.getElementById('analyze-btn-text').innerText = t.analyzeBtn;
+
+      // Quick Chips
+      const chipsContainer = document.getElementById('quick-chips-container');
+      chipsContainer.innerHTML = '';
+      t.chips.forEach(c => {
+        const chipBtn = document.createElement('button');
+        chipBtn.className = "px-2.5 py-1 rounded-md bg-zinc-50 dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 text-xs font-medium transition-colors";
+        chipBtn.innerText = c.label;
+        chipBtn.onclick = () => quickSearch(c.query);
+        chipsContainer.appendChild(chipBtn);
+      });
+
+      // Sentence UI Labels
+      document.getElementById('sentence-badge-title').innerText = t.sentenceBadge;
+      document.getElementById('sentence-play-label').innerText = t.sentencePlay;
+      document.getElementById('sentence-slow-label').innerText = t.sentenceSlow;
+      document.getElementById('sentence-meaning-label').innerText = t.sentenceMeaning;
+      document.getElementById('token-breakdown-title').innerText = t.tokenTitle;
+      document.getElementById('token-breakdown-sub').innerText = t.tokenSub;
+
+      // Word Cards Labels
+      document.getElementById('card-ednina-title').innerText = t.cardEdninaTitle;
+      document.getElementById('card-ednina-sub').innerText = t.cardEdninaSub;
+      document.getElementById('card-dvojina-title').innerText = t.cardDvojinaTitle;
+      document.getElementById('card-dvojina-sub').innerText = t.cardDvojinaSub;
+      document.getElementById('card-mnozina-title').innerText = t.cardMnozinaTitle;
+      document.getElementById('card-mnozina-sub').innerText = t.cardMnozinaSub;
+
+      // Table Labels
+      document.getElementById('declension-title').innerText = t.declensionTitle;
+      document.getElementById('declension-hint').innerText = t.declensionHint;
+      document.getElementById('th-case').innerText = t.thCase;
+      document.getElementById('th-ednina').innerText = t.thEdnina;
+      document.getElementById('th-dvojina').innerText = t.thDvojina;
+      document.getElementById('th-mnozina').innerText = t.thMnozina;
+      document.getElementById('grammar-tip-title').innerText = t.grammarTipTitle;
+
+      // Typo & Suggestion & Practice Labels
+      const didYouMeanLabel = document.getElementById('did-you-mean-label');
+      if (didYouMeanLabel) didYouMeanLabel.innerText = t.didYouMean || 'Ali ste mislili:';
+      
+      const practiceBadge = document.getElementById('practice-badge');
+      if (practiceBadge) practiceBadge.innerText = t.practiceBadge || 'Vaja';
+      
+      const practiceTitle = document.getElementById('practice-title');
+      if (practiceTitle) practiceTitle.innerText = t.practiceTitle || 'Vadi dvojino za to besedo';
+      
+      const practiceHint = document.getElementById('practice-hint');
+      if (practiceHint) practiceHint.innerText = t.practiceHint || 'Preveri znanje dvojine';
+      
+      const practiceInput = document.getElementById('practice-input');
+      if (practiceInput) practiceInput.placeholder = t.practicePlaceholder || 'Vpiši dvojino (npr. dva psa)...';
+      
+      const practiceCheckLabel = document.getElementById('practice-check-label');
+      if (practiceCheckLabel) practiceCheckLabel.innerText = t.practiceCheck || 'Preveri';
+    }
+
+    function clearInput() {
+      const inputEl = document.getElementById('word-input');
+      inputEl.value = '';
+      document.getElementById('clear-input-btn').classList.add('hidden');
+      inputEl.focus();
+    }
+
+    function handleEnter(e) {
+      if (e.key === 'Enter') processInput();
+    }
+
+    function quickSearch(val) {
+      document.getElementById('word-input').value = val;
+      document.getElementById('clear-input-btn').classList.remove('hidden');
+      processInput();
+    }
+
+    let lastCorrectionFrom = null;
+
+    function searchExactOriginal() {
+      if (lastCorrectionFrom) {
+        document.getElementById('word-input').value = lastCorrectionFrom;
+        processInput(lastCorrectionFrom, true);
+      }
+    }
+
+    async function processInput(queryOverride = null, exact = false) {
+      const inputEl = document.getElementById('word-input');
+      const query = (queryOverride !== null ? queryOverride : inputEl.value).trim();
+      if (!query) return;
+
+      const btn = document.getElementById('analyze-btn');
+      const statusMsg = document.getElementById('status-message');
+      const didYouMeanBanner = document.getElementById('did-you-mean-banner');
+      const correctionBanner = document.getElementById('correction-banner');
+      const t = i18nData[currentLang] || i18nData.sr;
+
+      // UI Reset
+      document.getElementById('sentence-results-container').classList.add('hidden');
+      document.getElementById('verb-results-container').classList.add('hidden');
+      document.getElementById('results-container').classList.add('hidden');
+      if (didYouMeanBanner) didYouMeanBanner.classList.add('hidden');
+      if (correctionBanner) correctionBanner.classList.add('hidden');
+
+      statusMsg.classList.remove('hidden', 'text-red-500');
+      statusMsg.classList.add('text-zinc-600', 'dark:text-zinc-400');
+      statusMsg.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1.5 text-xs"></i> ${t.analyzing}`;
+      btn.disabled = true;
+      btn.classList.add('opacity-50');
+
+      try {
+        const url = `/api/analyze?q=${encodeURIComponent(query)}&ui=${encodeURIComponent(currentLang)}${exact ? '&exact=1' : ''}`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Strežnik je vrnil napako');
+        
+        const data = await res.json();
+        currentAnalysis = data;
+
+        // Check 1: Typo Tolerance & Suggestions ("Did you mean?")
+        if (data.notFound) {
+          statusMsg.classList.add('hidden');
+          if (data.suggestions && data.suggestions.length > 0) {
+            didYouMeanBanner.classList.remove('hidden');
+            const chips = document.getElementById('did-you-mean-chips');
+            chips.innerHTML = '';
+            data.suggestions.forEach(s => {
+              const chip = document.createElement('button');
+              chip.className = "px-2.5 py-1 rounded-md bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-medium border border-zinc-300 dark:border-zinc-700 text-xs transition-colors shadow-xs flex items-center gap-1.5";
+              chip.innerHTML = `<strong>${s.word}</strong> <span class="text-[10px] text-zinc-400 uppercase font-mono">(${s.lang || 'sl'})</span>`;
+              chip.onclick = () => {
+                inputEl.value = s.word;
+                document.getElementById('clear-input-btn').classList.remove('hidden');
+                processInput(s.word, false);
+              };
+              chips.appendChild(chip);
+            });
+          } else {
+            statusMsg.classList.remove('hidden', 'text-zinc-600', 'dark:text-zinc-400');
+            statusMsg.classList.add('text-red-500');
+            statusMsg.innerText = "Beseda ni bila najdena v slovarju.";
+          }
+          return;
+        }
+
+        // Check 2: Diacritic Soft Auto-Correction (č, š, ž, ć, đ)
+        if (data.correction && !exact) {
+          lastCorrectionFrom = data.correction.from;
+          correctionBanner.classList.remove('hidden');
+          const targetWord = data.slWord || data.correction.to;
+          const fromWord = data.correction.from;
+          const correctedText = `${t.showingResultsFor || 'Prikazujem rezultate za'} <strong>${targetWord}</strong> (${t.correctedFrom || 'popravljeno iz'} '${fromWord}')`;
+          document.getElementById('correction-text').innerHTML = correctedText;
+          const searchInsteadTemplate = t.searchInstead || "Išči vseeno '{word}'";
+          document.getElementById('search-exact-btn').innerText = searchInsteadTemplate.replace('{word}', fromWord);
+        } else {
+          lastCorrectionFrom = null;
+          correctionBanner.classList.add('hidden');
+        }
+
+        if (data.isSentence) {
+          renderSentenceUI(data);
+        } else if (data.isVerb) {
+          renderVerbUI(data);
+        } else {
+          renderWordUI(data);
+        }
+
+        statusMsg.classList.add('hidden');
+
+      } catch (err) {
+        console.error(err);
+        statusMsg.classList.remove('text-zinc-600', 'dark:text-zinc-400');
+        statusMsg.classList.add('text-red-500');
+        statusMsg.innerText = "Napaka pri povezavi s strežnikom. Poskusite ponovno.";
+      } finally {
+        btn.disabled = false;
+        btn.classList.remove('opacity-50');
+      }
+    }
+
+    // Render Sentence UI
+    function renderSentenceUI(data) {
+      const t = i18nData[currentLang] || i18nData.sr;
+      currentSentenceAudio = data.audio;
+
+      document.getElementById('sentence-sl-text').innerText = data.slText;
+      document.getElementById('sentence-meaning-text').innerText = data.meaning;
+      document.getElementById('sentence-detected-tag').innerText = data.detectedLang.toUpperCase();
+
+      // Inline Phonemic Guide for Sentence
+      const phonRes = document.getElementById('sentence-phonemic-respelling');
+      const phonIpa = document.getElementById('sentence-phonemic-ipa');
+      if (data.phonemic) {
+        if (phonRes) phonRes.innerText = data.phonemic.respelling || '';
+        if (phonIpa) phonIpa.innerText = data.phonemic.ipa || '';
+      } else {
+        if (phonRes) phonRes.innerText = '';
+        if (phonIpa) phonIpa.innerText = '';
+      }
+
+      // Render Token Chips
+      const tokensContainer = document.getElementById('sentence-tokens-container');
+      tokensContainer.innerHTML = '';
+
+      data.tokens.forEach((token, index) => {
+        const pill = document.createElement('button');
+        pill.className = "sentence-token-pill px-2.5 py-1 rounded-md bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 font-medium text-xs border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors flex items-center gap-1";
+        pill.innerHTML = `<span>${token.clean}</span><i class="fa-solid fa-chevron-right text-[8px] opacity-40"></i>`;
+        
+        pill.onclick = () => {
+          // Highlight active token
+          document.querySelectorAll('.sentence-token-pill').forEach(p => p.classList.remove('word-token-active'));
+          pill.classList.add('word-token-active');
+          analyzeWordDirectly(token.lemma || token.clean);
+        };
+
+        tokensContainer.appendChild(pill);
+      });
+
+      document.getElementById('sentence-results-container').classList.remove('hidden');
+    }
+
+    // When clicking a token in the sentence, load declension tables below
+    async function analyzeWordDirectly(word) {
+      const statusMsg = document.getElementById('status-message');
+      statusMsg.classList.remove('hidden', 'text-red-500');
+      statusMsg.classList.add('text-zinc-600', 'dark:text-zinc-400');
+      statusMsg.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5 text-xs"></i> Nalagam: <strong>' + word + '</strong>...';
+
+      try {
+        const res = await fetch(`/api/analyze?q=${encodeURIComponent(word)}&ui=${encodeURIComponent(currentLang)}`);
+        if (!res.ok) throw new Error('Napaka pri analizi besede');
+        const data = await res.json();
+        
+        document.getElementById('verb-results-container').classList.add('hidden');
+        document.getElementById('results-container').classList.add('hidden');
+
+        if (data.isVerb) {
+          renderVerbUI(data);
+          document.getElementById('verb-results-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          renderWordUI(data);
+          document.getElementById('results-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        statusMsg.classList.add('hidden');
+      } catch (e) {
+        console.error(e);
+        statusMsg.classList.remove('text-zinc-600', 'dark:text-zinc-400');
+        statusMsg.classList.add('text-red-500');
+        statusMsg.innerText = "Ni bilo mogoče naložiti podatkov za besedo: " + word;
+      }
+    }
+
+    // Render Verb Conjugation UI (Sedanjik, Preteklik, Prihodnjik)
+    function renderVerbUI(data) {
+      const t = i18nData[currentLang] || i18nData.sr;
+      const { original, detectedLang, slWord, meaning, verbData, franData } = data;
+
+      // Meta & Header
+      let langDisplay = detectedLang === 'sl' ? 'Slovenščina' : `Prevedeno iz: ${detectedLang.toUpperCase()}`;
+      document.getElementById('verb-detected-lang-tag').innerText = langDisplay;
+      
+      if (detectedLang !== 'sl' && original.toLowerCase() !== slWord.toLowerCase()) {
+        document.getElementById('verb-original-word-tag').innerText = `(${original})`;
+      } else {
+        document.getElementById('verb-original-word-tag').innerText = "";
+      }
+
+      document.getElementById('verb-infinitive-text').innerText = slWord;
+      
+      const accentTag = document.getElementById('verb-accent-tag');
+      if (verbData.accent && verbData.accent.toLowerCase() !== slWord.toLowerCase()) {
+        accentTag.innerText = `[${verbData.accent}]`;
+      } else {
+        accentTag.innerText = "";
+      }
+
+      // Inline Phonemic Guide for Verb
+      const vPhonRes = document.getElementById('verb-phonemic-respelling');
+      const vPhonIpa = document.getElementById('verb-phonemic-ipa');
+      if (data.phonemic) {
+        if (vPhonRes) vPhonRes.innerText = data.phonemic.respelling || '';
+        if (vPhonIpa) vPhonIpa.innerText = data.phonemic.ipa || '';
+      } else {
+        if (vPhonRes) vPhonRes.innerText = '';
+        if (vPhonIpa) vPhonIpa.innerText = '';
+      }
+
+      // Meaning
+      document.getElementById('verb-meaning-text').innerText = meaning ? `${t.meaningLabel} ${meaning}` : "";
+
+      // Fran Badge
+      const franBadge = document.getElementById('verb-fran-badge-link');
+      const franText = document.getElementById('verb-fran-badge-text');
+      if (franData) {
+        franBadge.href = franData.franUrl || `https://fran.si/iskanje?View=1&Query=${encodeURIComponent(slWord)}`;
+        franText.innerText = franData.dictSource || 'Fran.si • SSKJ';
+      }
+
+      // 1. Sedanjik Dvojina List
+      const sedList = document.getElementById('verb-sedanjik-list');
+      sedList.innerHTML = '';
+      verbData.dvojinaSummary.sedanjik.forEach(item => {
+        const li = document.createElement('li');
+        li.className = "flex items-center justify-between py-2 px-3 text-xs";
+        li.innerHTML = `
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="font-mono text-[10px] text-zinc-400">(${item.person})</span>
+            <span class="font-semibold text-zinc-900 dark:text-zinc-100 capitalize">${item.form}</span>
+            ${item.phonemic ? `<span class="font-mono text-[10px] text-zinc-500 dark:text-zinc-400 font-normal">${item.phonemic.respelling}</span>` : ''}
+            <span class="text-[11px] text-zinc-400">(${item.enDesc})</span>
+          </div>
+          <button onclick="playDirectText('${item.audioText}', this)" class="px-2 py-0.5 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 rounded border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-[11px] flex items-center gap-1 transition-colors">
+            <i class="fa-solid fa-volume-high text-[10px]"></i>
+            <span>Zvok</span>
+          </button>
+        `;
+        sedList.appendChild(li);
+      });
+
+      // 2. Preteklik Dvojina List
+      const pretList = document.getElementById('verb-preteklik-list');
+      pretList.innerHTML = '';
+      verbData.dvojinaSummary.preteklik.forEach(item => {
+        const li = document.createElement('li');
+        li.className = "py-2 px-3 text-xs space-y-1";
+        li.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="font-medium text-zinc-500 text-[11px]">${item.genderLabel}</span>
+            <button onclick="playDirectText('${item.audioText}', this)" class="px-2 py-0.5 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 rounded border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-[11px] flex items-center gap-1 transition-colors">
+              <i class="fa-solid fa-volume-high text-[10px]"></i>
+              <span>Zvok</span>
+            </button>
+          </div>
+          <div class="font-semibold text-zinc-900 dark:text-zinc-100 pl-1 flex items-baseline gap-2 flex-wrap">
+            <span>${item.participle}</span>
+            ${item.phonemic ? `<span class="font-mono text-[10px] text-zinc-500 dark:text-zinc-400 font-normal">${item.phonemic.respelling}</span>` : ''}
+            <span class="text-zinc-400 font-normal text-[11px] italic">(npr. ${item.example})</span>
+          </div>
+        `;
+        pretList.appendChild(li);
+      });
+
+      // 3. Prihodnjik Dvojina List
+      const prihList = document.getElementById('verb-prihodnjik-list');
+      prihList.innerHTML = '';
+      verbData.dvojinaSummary.prihodnjik.forEach(item => {
+        const li = document.createElement('li');
+        li.className = "flex items-center justify-between py-2 px-3 text-xs";
+        li.innerHTML = `
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="font-mono text-[10px] text-zinc-400">(${item.person})</span>
+            <span class="font-semibold text-zinc-900 dark:text-zinc-100">${item.form}</span>
+            ${item.phonemic ? `<span class="font-mono text-[10px] text-zinc-500 dark:text-zinc-400 font-normal">${item.phonemic.respelling}</span>` : ''}
+            <span class="text-[11px] text-zinc-400">(${item.enDesc})</span>
+          </div>
+          <button onclick="playDirectText('${item.audioText}', this)" class="px-2 py-0.5 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 rounded border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-[11px] flex items-center gap-1 transition-colors">
+            <i class="fa-solid fa-volume-high text-[10px]"></i>
+            <span>Zvok</span>
+          </button>
+        `;
+        prihList.appendChild(li);
+      });
+
+      // 4. Full Table: Sedanjik, Preteklik, Prihodnjik across 1., 2., 3. person
+      const tableBody = document.getElementById('verb-full-table-body');
+      tableBody.innerHTML = '';
+
+      const rows = [
+        {
+          label: "1. oseba (Sedanjik)",
+          ednina: verbData.sedanjik.ednina.p1,
+          dvojina: verbData.sedanjik.dvojina.p1,
+          mnozina: verbData.sedanjik.mnozina.p1
+        },
+        {
+          label: "2. oseba (Sedanjik)",
+          ednina: verbData.sedanjik.ednina.p2,
+          dvojina: verbData.sedanjik.dvojina.p2,
+          mnozina: verbData.sedanjik.mnozina.p2
+        },
+        {
+          label: "3. oseba (Sedanjik)",
+          ednina: verbData.sedanjik.ednina.p3,
+          dvojina: verbData.sedanjik.dvojina.p3,
+          mnozina: verbData.sedanjik.mnozina.p3
+        },
+        {
+          label: "1. oseba (Preteklik)",
+          ednina: verbData.preteklik.ednina.p1,
+          dvojina: verbData.preteklik.dvojina.p1,
+          mnozina: verbData.preteklik.mnozina.p1
+        },
+        {
+          label: "1. oseba (Prihodnjik)",
+          ednina: verbData.prihodnjik.ednina.p1,
+          dvojina: verbData.prihodnjik.dvojina.p1,
+          mnozina: verbData.prihodnjik.mnozina.p1
+        }
+      ];
+
+      rows.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-zinc-50 dark:hover:bg-zinc-900/40 transition-colors text-xs";
+        tr.innerHTML = `
+          <td class="p-2.5 font-medium text-zinc-700 dark:text-zinc-300 border-b border-zinc-100 dark:border-zinc-800 whitespace-nowrap">${r.label}</td>
+          <td class="p-2.5 border-b border-zinc-100 dark:border-zinc-800">
+            <button onclick="playDirectText('${r.ednina}', this)" class="hover:text-zinc-900 dark:hover:text-zinc-100 flex items-center gap-1 text-left">
+              <span>${r.ednina}</span>
+              <i class="fa-solid fa-volume-low text-[10px] opacity-40"></i>
+            </button>
+          </td>
+          <td class="p-2.5 font-semibold text-zinc-900 dark:text-zinc-100 bg-zinc-100/60 dark:bg-zinc-800/40 border-b border-zinc-100 dark:border-zinc-800">
+            <button onclick="playDirectText('${r.dvojina}', this)" class="hover:text-zinc-900 dark:hover:text-zinc-100 flex items-center gap-1 text-left">
+              <span>${r.dvojina}</span>
+              <i class="fa-solid fa-volume-low text-[10px] opacity-50"></i>
+            </button>
+          </td>
+          <td class="p-2.5 border-b border-zinc-100 dark:border-zinc-800">
+            <button onclick="playDirectText('${r.mnozina}', this)" class="hover:text-zinc-900 dark:hover:text-zinc-100 flex items-center gap-1 text-left">
+              <span>${r.mnozina}</span>
+              <i class="fa-solid fa-volume-low text-[10px] opacity-40"></i>
+            </button>
+          </td>
+        `;
+        tableBody.appendChild(tr);
+      });
+
+      // Show verb UI
+      document.getElementById('verb-results-container').classList.remove('hidden');
+    }
+
+    // Render Word UI (3 Cards + 6-Case Table)
+    function renderWordUI(data) {
+      const t = i18nData[currentLang] || i18nData.sr;
+      const { original, detectedLang, wordData, audio, meaning } = data;
+
+      // Header & Meta
+      let langDisplay = detectedLang === 'sl' ? 'Slovenščina' : `Prevedeno iz: ${detectedLang.toUpperCase()}`;
+      document.getElementById('detected-lang-tag').innerText = langDisplay;
+      
+      if (detectedLang !== 'sl' && original.toLowerCase() !== wordData.beseda.toLowerCase()) {
+        document.getElementById('original-word-tag').innerText = `(${original})`;
+      } else {
+        document.getElementById('original-word-tag').innerText = "";
+      }
+      
+      document.getElementById('translated-sl-word').innerText = wordData.beseda;
+
+      // Fran.si / Franja.si official metadata
+      const franBadge = document.getElementById('fran-badge-link');
+      const franText = document.getElementById('fran-badge-text');
+      const accentTag = document.getElementById('word-accent-tag');
+      
+      if (data.franData) {
+        franBadge.classList.remove('hidden');
+        franBadge.href = data.franData.franUrl || `https://fran.si/iskanje?View=1&Query=${encodeURIComponent(wordData.beseda)}`;
+        franText.innerText = data.franData.dictSource || 'Fran.si • SSKJ';
+        if (data.franData.accent && data.franData.accent.toLowerCase() !== wordData.beseda.toLowerCase()) {
+          accentTag.innerText = `[${data.franData.accent}]`;
+        } else {
+          accentTag.innerText = "";
+        }
+      } else {
+        franBadge.classList.add('hidden');
+        accentTag.innerText = "";
+      }
+
+      // Inline Phonemic Guide for Headword
+      const wordPhonRes = document.getElementById('word-phonemic-respelling');
+      const wordPhonIpa = document.getElementById('word-phonemic-ipa');
+      if (data.phonemic) {
+        if (wordPhonRes) wordPhonRes.innerText = data.phonemic.respelling || '';
+        if (wordPhonIpa) wordPhonIpa.innerText = data.phonemic.ipa || '';
+      } else {
+        if (wordPhonRes) wordPhonRes.innerText = '';
+        if (wordPhonIpa) wordPhonIpa.innerText = '';
+      }
+      
+      // Gender localization
+      const localizedGender = t.genders?.[wordData.spol] || wordData.spol;
+      document.getElementById('word-gender-info').innerText = localizedGender;
+
+      // Meaning
+      if (meaning && meaning.toLowerCase() !== wordData.beseda.toLowerCase()) {
+        document.getElementById('word-meaning-tag').innerText = `${t.meaningLabel} ${meaning}`;
+      } else {
+        document.getElementById('word-meaning-tag').innerText = "";
+      }
+
+      // Card Values
+      document.getElementById('card-ednina-val').innerText = wordData.ednina_prikaz;
+      document.getElementById('card-dvojina-val').innerText = wordData.dvojina_prikaz;
+      document.getElementById('card-mnozina-val').innerText = wordData.mnozina_prikaz;
+
+      // Card Phonemic Pronunciation Guide
+      const edPhon = wordData.ednina_phonemic || data.phonemic;
+      const dvPhon = wordData.dvojina_phonemic;
+      const mnPhon = wordData.mnozina_phonemic;
+
+      const edEl = document.getElementById('card-ednina-phonemic');
+      const dvEl = document.getElementById('card-dvojina-phonemic');
+      const mnEl = document.getElementById('card-mnozina-phonemic');
+
+      if (edEl) edEl.innerText = edPhon?.respelling ? `${edPhon.respelling} • ${edPhon.ipa}` : '';
+      if (dvEl) dvEl.innerText = dvPhon?.respelling ? `${dvPhon.respelling} • ${dvPhon.ipa}` : '';
+      if (mnEl) mnEl.innerText = mnPhon?.respelling ? `${mnPhon.respelling} • ${mnPhon.ipa}` : '';
+
+      // Initialize Dual Practice for this word
+      setupPracticeCard(wordData);
+
+      // Audio badge labels: real PONS recording vs. neural Slovene voice
+      const ponsClasses = ['text-zinc-900', 'dark:text-zinc-100', 'border-zinc-300', 'dark:border-zinc-700', 'bg-zinc-100', 'dark:bg-zinc-800'];
+      const neuralClasses = ['text-zinc-600', 'dark:text-zinc-400', 'border-zinc-200', 'dark:border-zinc-800', 'bg-zinc-50', 'dark:bg-zinc-900'];
+      
+      ['ednina', 'dvojina', 'mnozina'].forEach(key => {
+        const label = document.getElementById(`${key}-audio-label`);
+        const btn = document.getElementById(`${key}-audio-btn`);
+        const item = audio?.[key];
+        if (label && btn) {
+          btn.classList.remove(...ponsClasses, ...neuralClasses);
+          if (item?.source === 'pons') {
+            label.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400 mr-1.5"></span>${t.ponsSound}`;
+            btn.classList.add(...ponsClasses);
+            btn.title = `PONS posnetek: "${item.word}"`;
+          } else {
+            label.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500 mr-1.5"></span>${t.naturalVoice}`;
+            btn.classList.add(...neuralClasses);
+            btn.title = `Nevronski slovenski glas: "${item?.word}"`;
+          }
+        }
+      });
+
+      // Grammar tip
+      document.getElementById('grammar-tip').innerText = wordData.kratek_opis;
+
+      // Declension table with localized cases & questions
+      const tbody = document.getElementById('declension-table-body');
+      tbody.innerHTML = '';
+      
+      const casesList = t.cases || i18nData.sr.cases;
+
+      casesList.forEach(c => {
+        const row = document.createElement('tr');
+        row.className = "hover:bg-zinc-50 dark:hover:bg-zinc-900/40 transition-colors text-xs";
+        
+        row.innerHTML = `
+          <td class="p-2.5 border-b border-zinc-100 dark:border-zinc-800 whitespace-nowrap">
+            <span class="font-medium text-zinc-800 dark:text-zinc-200">${c.name}</span>
+            <span class="block text-[10px] text-zinc-400 font-normal">${c.question}</span>
+          </td>
+          <td class="p-2.5 border-b border-zinc-100 dark:border-zinc-800">
+            <button onclick="playDirectText('${wordData.tabela[c.id].ednina}', this)" class="text-left hover:text-zinc-900 dark:hover:text-zinc-100 flex items-center gap-1.5 transition-colors group">
+              <span>${wordData.tabela[c.id].ednina}</span>
+              <i class="fa-solid fa-volume-low text-[10px] opacity-40 group-hover:opacity-100"></i>
+            </button>
+          </td>
+          <td class="p-2.5 font-semibold text-zinc-900 dark:text-zinc-100 bg-zinc-100/60 dark:bg-zinc-800/40 border-b border-zinc-100 dark:border-zinc-800">
+            <button onclick="playDirectText('${wordData.tabela[c.id].dvojina}', this)" class="text-left hover:text-zinc-900 dark:hover:text-zinc-100 flex items-center gap-1.5 transition-colors group">
+              <span>${wordData.tabela[c.id].dvojina}</span>
+              <i class="fa-solid fa-volume-low text-[10px] opacity-50 group-hover:opacity-100"></i>
+            </button>
+          </td>
+          <td class="p-2.5 border-b border-zinc-100 dark:border-zinc-800">
+            <button onclick="playDirectText('${wordData.tabela[c.id].mnozina}', this)" class="text-left hover:text-zinc-900 dark:hover:text-zinc-100 flex items-center gap-1.5 transition-colors group">
+              <span>${wordData.tabela[c.id].mnozina}</span>
+              <i class="fa-solid fa-volume-low text-[10px] opacity-40 group-hover:opacity-100"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      // Reveal Word UI
+      document.getElementById('results-container').classList.remove('hidden');
+    }
+
+    // Audio Playback
+    function playAudioTrack(trackKey, btnElement) {
+      if (!currentAnalysis || !currentAnalysis.audio || !currentAnalysis.audio[trackKey]) return;
+
+      const audioInfo = currentAnalysis.audio[trackKey];
+      const fallbackText = audioInfo.word || currentAnalysis.wordData[trackKey + '_prikaz'];
+      playAudioUrl(audioInfo.audioUrl, btnElement, fallbackText);
+    }
+
+    function playSentenceAudio(speed) {
+      if (!currentSentenceAudio) return;
+      const btn = speed === 'slow' ? document.getElementById('sentence-slow-btn') : document.getElementById('sentence-audio-btn');
+      const item = speed === 'slow' ? currentSentenceAudio.slow : currentSentenceAudio.normal;
+      if (item && item.audioUrl) {
+        playAudioUrl(item.audioUrl, btn);
+      }
+    }
+
+    function playDirectText(text, btnElement) {
+      const audioUrl = `/api/tts?text=${encodeURIComponent(text.replace(/\s*\/\s*/g, ', '))}`;
+      playAudioUrl(audioUrl, btnElement, text);
+    }
+
+    function playAudioUrl(url, btnElement, fallbackText) {
+      if (activeAudio) {
+        activeAudio.pause();
+        activeAudio = null;
+      }
+
+      if (btnElement) btnElement.classList.add('playing-audio');
+
+      const audio = new Audio(url);
+      activeAudio = audio;
+
+      audio.onended = () => {
+        if (btnElement) btnElement.classList.remove('playing-audio');
+        activeAudio = null;
+      };
+
+      audio.onerror = () => {
+        console.warn('Audio playback failed, attempting web speech synthesis fallback');
+        if (btnElement) btnElement.classList.remove('playing-audio');
+        activeAudio = null;
+        if (fallbackText) playSpeechSynthesis(fallbackText);
+      };
+
+      audio.play().catch(e => {
+        console.warn('Playback blocked or failed:', e);
+        if (btnElement) btnElement.classList.remove('playing-audio');
+        if (fallbackText) playSpeechSynthesis(fallbackText);
+      });
+    }
+
+    function playSpeechSynthesis(text) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'sl-SI';
+      utterance.rate = 0.85;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // ==========================================
+    // Interactive Practice / Quiz Mode Logic
+    // Soft Diacritic Tolerance & Character Diffs
+    // ==========================================
+    let currentPracticeExpected = [];
+    let currentPracticeWord = '';
+
+    function setupPracticeCard(wordData) {
+      const t = i18nData[currentLang] || i18nData.sr;
+      currentPracticeWord = wordData.beseda;
+      
+      const candidates = [
+        wordData.dvojina_prikaz,
+        wordData.tabela?.imenovalnik?.dvojina
+      ].filter(Boolean);
+      currentPracticeExpected = Array.from(new Set(candidates));
+
+      const targetWordEl = document.getElementById('practice-target-word');
+      if (targetWordEl) targetWordEl.innerText = wordData.beseda;
+
+      const promptEl = document.getElementById('practice-prompt-text');
+      if (promptEl) {
+        promptEl.innerHTML = `${t.practicePrompt || 'Vpišite obliko za dvojino za besedo:'} <strong class="text-zinc-900 dark:text-zinc-100">${wordData.beseda}</strong>`;
+      }
+      
+      const input = document.getElementById('practice-input');
+      if (input) {
+        input.value = '';
+        input.placeholder = t.practicePlaceholder || 'Vpiši dvojino (npr. dva psa)...';
+      }
+      
+      const feedback = document.getElementById('practice-feedback');
+      if (feedback) {
+        feedback.classList.add('hidden');
+        feedback.innerHTML = '';
+      }
+    }
+
+    function handlePracticeEnter(e) {
+      if (e.key === 'Enter') checkPracticeAnswer();
+    }
+
+    async function checkPracticeAnswer() {
+      const input = document.getElementById('practice-input');
+      const userInput = (input ? input.value : '').trim();
+      const feedback = document.getElementById('practice-feedback');
+      const t = i18nData[currentLang] || i18nData.sr;
+
+      if (!userInput) {
+        if (input) input.focus();
+        return;
+      }
+
+      feedback.classList.remove('hidden');
+      feedback.className = "p-3 rounded-md text-xs space-y-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400";
+      feedback.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-xs mr-1.5"></i> Preverjam...`;
+
+      try {
+        let bestResult = null;
+        let bestExpected = currentPracticeExpected[0] || '';
+
+        for (const exp of currentPracticeExpected) {
+          const res = await fetch('/api/quiz/check', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userInput, expected: exp })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.status === 'correct') {
+              bestResult = data;
+              bestExpected = exp;
+              break;
+            }
+            if (data.status === 'diacritics' && (!bestResult || bestResult.status === 'wrong')) {
+              bestResult = data;
+              bestExpected = exp;
+            } else if (!bestResult) {
+              bestResult = data;
+              bestExpected = exp;
+            }
+          }
+        }
+
+        if (!bestResult) throw new Error('Check failed');
+
+        feedback.className = "p-3 rounded-md text-xs space-y-2 transition-all";
+
+        if (bestResult.status === 'correct') {
+          feedback.classList.add('bg-emerald-50/80', 'dark:bg-emerald-950/30', 'border', 'border-emerald-200', 'dark:border-emerald-900/50', 'text-emerald-900', 'dark:text-emerald-200');
+          feedback.innerHTML = `
+            <div class="flex items-center gap-2 font-semibold text-emerald-800 dark:text-emerald-300">
+              <i class="fa-solid fa-circle-check text-xs text-emerald-600 dark:text-emerald-400"></i>
+              <span>${t.practiceCorrect || 'Pravilno! Odlično poznavanje dvojine.'}</span>
+            </div>
+            <div class="flex items-center gap-2 pt-0.5">
+              <span class="font-medium text-emerald-950 dark:text-emerald-100 font-mono">${bestExpected}</span>
+              <button onclick="playDirectText('${bestExpected}', this)" class="inline-flex items-center gap-1 px-2 py-0.5 rounded border border-emerald-300 dark:border-emerald-800 bg-white dark:bg-emerald-900/60 text-[11px] text-emerald-800 dark:text-emerald-200 hover:bg-emerald-50 dark:hover:bg-emerald-800 transition-colors">
+                <i class="fa-solid fa-volume-high text-[10px]"></i> ${t.practiceListen || 'Poslušaj'}
+              </button>
+            </div>
+          `;
+        } else if (bestResult.status === 'diacritics') {
+          // Soft Auto-Correction: Missing carons flagged with granular diff
+          feedback.classList.add('bg-amber-50/80', 'dark:bg-amber-950/30', 'border', 'border-amber-200', 'dark:border-amber-900/50', 'text-amber-900', 'dark:text-amber-200');
+          
+          let charDiffHtml = bestResult.chars.map(c => {
+            if (c.ok) {
+              return `<span class="px-1 py-0.5 font-mono text-zinc-800 dark:text-zinc-200">${c.char === ' ' ? '&nbsp;' : c.char}</span>`;
+            } else {
+              return `<span class="inline-flex items-baseline px-1.5 py-0.5 rounded bg-amber-200 dark:bg-amber-900/80 text-amber-950 dark:text-amber-100 font-mono font-bold border border-amber-300 dark:border-amber-700" title="Vpisano '${c.char}' namesto '${c.expected}'"><s class="opacity-50 text-[10px] mr-0.5">${c.char}</s>${c.expected}</span>`;
+            }
+          }).join('');
+
+          feedback.innerHTML = `
+            <div class="flex items-center gap-2 font-semibold text-amber-800 dark:text-amber-300">
+              <i class="fa-solid fa-triangle-exclamation text-xs text-amber-600 dark:text-amber-400"></i>
+              <span>${t.practiceAlmost || 'Skoraj pravilno — pazi na strešice (č, š, ž)!'}</span>
+            </div>
+            <div class="p-2 rounded bg-white/70 dark:bg-zinc-900/70 border border-amber-200/60 dark:border-amber-900/40 space-y-1">
+              <div class="text-[10px] uppercase font-semibold text-amber-800/70 dark:text-amber-300/70">Razlika v črkah:</div>
+              <div class="flex items-center gap-0.5 flex-wrap text-xs">${charDiffHtml}</div>
+            </div>
+            <div class="flex items-center justify-between gap-2 pt-0.5 flex-wrap">
+              <span class="text-[11px] text-amber-900/80 dark:text-amber-200/80">Pravilna oblika s strešico: <strong class="font-semibold font-mono">${bestExpected}</strong></span>
+              <button onclick="playDirectText('${bestExpected}', this)" class="inline-flex items-center gap-1 px-2 py-0.5 rounded border border-amber-300 dark:border-amber-800 bg-white dark:bg-amber-900/60 text-[11px] text-amber-800 dark:text-amber-200 hover:bg-amber-50 dark:hover:bg-amber-800 transition-colors">
+                <i class="fa-solid fa-volume-high text-[10px]"></i> ${t.practiceListen || 'Poslušaj'}
+              </button>
+            </div>
+          `;
+        } else {
+          // Wrong
+          feedback.classList.add('bg-zinc-100/80', 'dark:bg-zinc-900', 'border', 'border-zinc-200', 'dark:border-zinc-800', 'text-zinc-800', 'dark:text-zinc-200');
+          feedback.innerHTML = `
+            <div class="flex items-center gap-2 font-semibold text-zinc-800 dark:text-zinc-200">
+              <i class="fa-solid fa-circle-xmark text-xs text-zinc-500"></i>
+              <span>${t.practiceWrong || 'Poskusi znova.'}</span>
+            </div>
+            <div class="flex items-center justify-between gap-2 pt-1 flex-wrap">
+              <span class="text-[11px] text-zinc-600 dark:text-zinc-400">Pravilna oblika je: <strong class="text-zinc-900 dark:text-zinc-100 font-mono">${bestExpected}</strong></span>
+              <button onclick="playDirectText('${bestExpected}', this)" class="inline-flex items-center gap-1 px-2 py-0.5 rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-[11px] text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors">
+                <i class="fa-solid fa-volume-high text-[10px]"></i> ${t.practiceListen || 'Poslušaj'}
+              </button>
+            </div>
+          `;
+        }
+
+      } catch (err) {
+        console.error(err);
+        feedback.className = "p-3 rounded-md text-xs text-red-500 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900";
+        feedback.innerText = "Pri preverjanju je prišlo do napake.";
+      }
+    }
+
+    // Modal Helpers for Phonemic Legend
+    function openPhonemicModal() {
+      const modal = document.getElementById('phonemic-modal');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closePhonemicModal() {
+      const modal = document.getElementById('phonemic-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    // Keyboard support: Escape closes any open modal
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeLangModal();
+        closePhonemicModal();
+      }
+    });
+  </script>
+</body>
+</html>

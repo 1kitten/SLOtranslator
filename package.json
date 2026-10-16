@@ -1,0 +1,16 @@
+{
+  "name": "slodvojina",
+  "version": "1.0.0",
+  "description": "Slovenski Generator Dvojine, Množine in Sklanjatev z zvočno izgovorjavo",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "msedge-tts": "^2.1.0"
+  }
+}
