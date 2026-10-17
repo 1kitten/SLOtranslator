@@ -387,11 +387,77 @@ async function translateWithFallback(text, sl = 'auto', tl = 'sl') {
   return { text, detected: sl };
 }
 
+// High-frequency conjugated verb forms map -> infinitive
+const verbFormsMap = {
+  // biti
+  "sem": "biti", "si": "biti", "je": "biti", "sva": "biti", "sta": "biti", "smo": "biti", "ste": "biti", "so": "biti",
+  "nisem": "biti", "nisi": "biti", "ni": "biti", "nisva": "biti", "nista": "biti", "nismo": "biti", "niste": "biti", "niso": "biti",
+  "bom": "biti", "boš": "biti", "bo": "biti", "bova": "biti", "bosta": "biti", "bomo": "biti", "boste": "biti", "bodo": "biti", "bojo": "biti",
+  "bil": "biti", "bila": "biti", "bilo": "biti", "bili": "biti", "bile": "biti",
+  // iti
+  "grem": "iti", "greš": "iti", "gre": "iti", "greva": "iti", "gresta": "iti", "gremo": "iti", "greste": "iti", "gredo": "iti", "grejo": "iti",
+  "šel": "iti", "šla": "iti", "šlo": "iti", "šli": "iti", "šle": "iti",
+  // imeti
+  "imam": "imeti", "imaš": "imeti", "ima": "imeti", "imava": "imeti", "imata": "imeti", "imamo": "imeti", "imate": "imeti", "imajo": "imeti",
+  "nimam": "imeti", "nimaš": "imeti", "nima": "imeti", "nimava": "imeti", "nimata": "imeti", "nimamo": "imeti", "nimate": "imeti", "nimajo": "imeti",
+  "imel": "imeti", "imela": "imeti", "imelo": "imeti", "imeli": "imeti", "imele": "imeti",
+  // želeti
+  "želim": "želeti", "želiš": "želeti", "želi": "želeti", "želiva": "želeti", "želita": "želeti", "želimo": "želeti", "želite": "želeti", "želijo": "želeti",
+  "želel": "želeti", "želela": "želeti", "želelo": "želeti", "želeli": "želeti", "želele": "želeti",
+  // hoteti
+  "hočem": "hoteti", "hočeš": "hoteti", "hoče": "hoteti", "hočeva": "hoteti", "hočeta": "hoteti", "hočemo": "hoteti", "hočete": "hoteti", "hočejo": "hoteti",
+  "nočem": "hoteti", "nočeš": "hoteti", "noče": "hoteti", "nočeva": "hoteti", "nočeta": "hoteti", "nočemo": "hoteti", "nočete": "hoteti", "nočejo": "hoteti",
+  "hotel": "hoteti", "hotela": "hoteti", "hotelo": "hoteti", "hoteli": "hoteti", "hotele": "hoteti",
+  // vedeti
+  "vem": "vedeti", "veš": "vedeti", "ve": "vedeti", "veva": "vedeti", "vesta": "vedeti", "vemo": "vedeti", "veste": "vedeti", "vedo": "vedeti", "vejo": "vedeti",
+  "vedel": "vedeti", "vedela": "vedeti", "vedelo": "vedeti", "vedeli": "vedeti", "vedele": "vedeti",
+  // moči
+  "morem": "moči", "moreš": "moči", "more": "moči", "moreva": "moči", "moreta": "moči", "moremo": "moči", "morete": "moči", "morejo": "moči",
+  "mogel": "moči", "mogla": "moči", "moglo": "moči", "mogli": "moči", "mogle": "moči",
+  // dati
+  "dam": "dati", "daš": "dati", "da": "dati", "dava": "dati", "dasta": "dati", "damo": "dati", "daste": "dati", "dajo": "dati",
+  "dal": "dati", "dala": "dati", "dalo": "dati", "dali": "dati", "dale": "dati",
+  // jesti
+  "jem": "jesti", "ješ": "jesti", "jeva": "jesti", "jesta": "jesti", "jemo": "jesti", "jeste": "jesti", "jedo": "jesti",
+  "jedel": "jesti", "jedla": "jesti", "jedlo": "jesti", "jedli": "jesti", "jedle": "jesti",
+  // priti
+  "pridem": "priti", "prideš": "priti", "pride": "priti", "prideva": "priti", "prideta": "priti", "pridemo": "priti", "pridete": "priti", "pridejo": "priti",
+  "prišel": "priti", "prišla": "priti", "prišlo": "priti", "prišli": "priti", "prišle": "priti",
+  // vzeti
+  "vzamem": "vzeti", "vzameš": "vzeti", "vzame": "vzeti", "vzameva": "vzeti", "vzameta": "vzeti", "vzamemo": "vzeti", "vzamete": "vzeti", "vzamejo": "vzeti",
+  "vzel": "vzeti", "vzela": "vzeti", "vzelo": "vzeti", "vzeli": "vzeti", "vzele": "vzeti",
+  // reči
+  "rečem": "reči", "rečeš": "reči", "reče": "reči", "rečeva": "reči", "rečeta": "reči", "rečemo": "reči", "rečete": "reči", "rečejo": "reči",
+  "rekel": "reči", "rekla": "reči", "reklo": "reči", "rekli": "reči", "rekle": "reči",
+  // peči
+  "pečem": "peči", "pečeš": "peči", "peče": "peči", "pečeva": "peči", "pečeta": "peči", "pečemo": "peči", "pečete": "peči", "pečejo": "peči",
+  "pekel": "peči", "pekla": "peči", "peklo": "peči", "pekli": "peči", "pekle": "peči",
+  // teči
+  "tečem": "teči", "tečeš": "teči", "teče": "teči", "tečeva": "teči", "tečeta": "teči", "tečemo": "teči", "tečete": "teči", "tečejo": "teči",
+  "tekel": "teči", "tekla": "teči", "teklo": "teči", "tekli": "teči", "tekle": "teči"
+};
+
 // Extract base lemma for word declension
 function resolveBaseLemma(word) {
   const lower = word.toLowerCase().trim();
   if (irregularDictionary[lower]) return lower;
   if (irregularFormsMap[lower]) return irregularFormsMap[lower];
+  if (verbFormsMap[lower]) return verbFormsMap[lower];
+
+  // Heuristic stem reversal for -ovati verbs:
+  // e.g. potujem, potuješ, potuje, potujeva, potujeta, potujemo, potujete, potujejo -> potovati
+  // e.g. potoval, potovala, potovalo, potovali, potovale -> potovati
+  if (lower.endsWith('ujem') || lower.endsWith('uješ') || lower.endsWith('ujeva') || lower.endsWith('ujeta') || lower.endsWith('ujemo') || lower.endsWith('ujete') || lower.endsWith('ujejo')) {
+    const stem = lower.replace(/uj(em|eš|eva|eta|emo|ete|ejo)$/, '');
+    if (stem.length >= 2) return stem + 'ovati';
+  }
+  if (lower.endsWith('uje') && lower.length > 4) {
+    return lower.slice(0, -3) + 'ovati';
+  }
+  if (lower.endsWith('oval') || lower.endsWith('ovala') || lower.endsWith('ovalo') || lower.endsWith('ovali') || lower.endsWith('ovale')) {
+    const stem = lower.replace(/ov(al|ala|alo|ali|ale)$/, '');
+    if (stem.length >= 2) return stem + 'ovati';
+  }
 
   // Common feminine inflections (-o, -i, -e -> -a)
   if (lower.endsWith('o') && lower.length > 3) {
@@ -426,6 +492,7 @@ function buildVocabulary() {
     }
   }
   for (const [form, base] of Object.entries(irregularFormsMap)) add(form, 'sl', base);
+  for (const [form, base] of Object.entries(verbFormsMap)) add(form, 'sl', base);
   return vocab;
 }
 
@@ -484,23 +551,36 @@ app.get('/api/analyze', async (req, res) => {
     // ==========================================
     if (isSentence) {
       // 1. Determine if query is in Slovenian or foreign language
-      const transToSl = await translateWithFallback(query, 'auto', 'sl');
-      let slText = transToSl.text;
-      let detectedLang = transToSl.detected;
+      const rawWords = query.toLowerCase().split(/\s+/).map(w => w.replace(/[^a-zčšž]/gi, '')).filter(Boolean);
+      const slHits = rawWords.filter(w => verbFormsMap[w] || irregularFormsMap[w] || findInLocalDictionary(w, 'sl') || irregularDictionary[w]);
+      const looksLikeSlovene = slHits.length >= 2 || (rawWords.length <= 3 && slHits.length >= 1);
+
+      let detectedLang = 'sl';
+      let slText = query;
       let meaning = '';
 
-      if (detectedLang === 'sl') {
-        // User wrote a Slovenian sentence -> translate meaning into user language
+      if (looksLikeSlovene) {
+        detectedLang = 'sl';
         slText = query;
         const transToUser = await translateWithFallback(query, 'sl', userLang);
         meaning = transToUser.text;
       } else {
-        // User wrote in their language -> slText is Slovenian, meaning is user text (or translated to userLang)
-        if (detectedLang === userLang) {
-          meaning = query;
-        } else {
-          const transToUser = await translateWithFallback(query, 'auto', userLang);
+        const transToSl = await translateWithFallback(query, 'auto', 'sl');
+        detectedLang = transToSl.detected;
+        if (detectedLang === 'sl') {
+          // User wrote a Slovenian sentence -> translate meaning into user language
+          slText = query;
+          const transToUser = await translateWithFallback(query, 'sl', userLang);
           meaning = transToUser.text;
+        } else {
+          // User wrote in their language -> slText is Slovenian, meaning is user text (or translated to userLang)
+          slText = transToSl.text;
+          if (detectedLang === userLang) {
+            meaning = query;
+          } else {
+            const transToUser = await translateWithFallback(query, 'auto', userLang);
+            meaning = transToUser.text;
+          }
         }
       }
 
@@ -568,45 +648,67 @@ app.get('/api/analyze', async (req, res) => {
       }
     }
 
-    // 1. Check local & live Fran.si / Franja.si database
-    const franResolved = await resolveWordWithFran(lookupWord, userLang);
-    if (franResolved) {
-      slWord = franResolved.slWord;
-      detectedLang = franResolved.matchedLang || (franResolved.fromDb || franResolved.liveFetched ? (userLang === 'sl' ? 'sl' : userLang) : 'sl');
-      franData = {
-        accent: franResolved.accent || slWord,
-        spol: franResolved.spol,
-        dictSource: franResolved.dictSource,
-        franUrl: franResolved.franUrl,
-        franjaUrl: franResolved.franjaUrl,
-        verified: true
-      };
-    } else if (irregularDictionary[lookupWord]) {
-      slWord = lookupWord;
+    // Check if single-word query is a known inflected verb form or infinitive
+    const cleanWord = lookupWord.toLowerCase().trim();
+    let isVerb = false;
+    let franResolved = null;
+
+    if (verbFormsMap[cleanWord]) {
+      slWord = verbFormsMap[cleanWord];
       detectedLang = 'sl';
-    } else if (irregularFormsMap[lookupWord]) {
-      slWord = irregularFormsMap[lookupWord];
+      isVerb = true;
+    } else if (isVerbInfinitive(cleanWord)) {
+      slWord = cleanWord;
       detectedLang = 'sl';
-    } else if (suggestions.length) {
-      // Neither our dictionary nor Fran/Franja know this word, but close
-      // matches exist: offer them instead of guessing a declension.
-      return res.json({ notFound: true, isSentence: false, original: query, suggestions });
-    } else if (/[čšž]/i.test(lookupWord)) {
-      slWord = resolveBaseLemma(lookupWord);
-      detectedLang = 'sl';
-    } else if (await isSlovenianWordInPons(lookupWord)) {
-      slWord = lookupWord;
-      detectedLang = 'sl';
+      isVerb = true;
     } else {
-      // 2. Translate foreign word to Slovenian base word
-      const trans = await translateWithFallback(lookupWord, 'auto', 'sl');
-      detectedLang = trans.detected;
-      slWord = resolveBaseLemma(trans.text.split(' ')[0]);
+      // 1. Check local & live Fran.si / Franja.si database
+      franResolved = await resolveWordWithFran(lookupWord, userLang);
+      if (franResolved && (franResolved.slWord.toLowerCase() === lookupWord || !isVerbInfinitive(lookupWord))) {
+        slWord = franResolved.slWord;
+        detectedLang = franResolved.matchedLang || (franResolved.fromDb || franResolved.liveFetched ? (userLang === 'sl' ? 'sl' : userLang) : 'sl');
+        franData = {
+          accent: franResolved.accent || slWord,
+          spol: franResolved.spol,
+          partOfSpeech: franResolved.partOfSpeech,
+          dictSource: franResolved.dictSource,
+          franUrl: franResolved.franUrl,
+          franjaUrl: franResolved.franjaUrl,
+          verified: true
+        };
+      } else if (irregularDictionary[lookupWord]) {
+        slWord = lookupWord;
+        detectedLang = 'sl';
+      } else if (irregularFormsMap[lookupWord]) {
+        slWord = irregularFormsMap[lookupWord];
+        detectedLang = 'sl';
+      } else if (resolveBaseLemma(lookupWord) !== lookupWord) {
+        slWord = resolveBaseLemma(lookupWord);
+        detectedLang = 'sl';
+      } else if (suggestions.length) {
+        // Neither our dictionary nor Fran/Franja know this word, but close
+        // matches exist: offer them instead of guessing a declension.
+        return res.json({ notFound: true, isSentence: false, original: query, suggestions });
+      } else if (/[čšž]/i.test(lookupWord)) {
+        slWord = resolveBaseLemma(lookupWord);
+        detectedLang = 'sl';
+      } else if (await isSlovenianWordInPons(lookupWord)) {
+        slWord = lookupWord;
+        detectedLang = 'sl';
+      } else {
+        // 2. Translate foreign word to Slovenian base word
+        const trans = await translateWithFallback(lookupWord, 'auto', 'sl');
+        detectedLang = trans.detected;
+        slWord = resolveBaseLemma(trans.text.split(' ')[0]);
+      }
     }
 
     // Translate meaning of the word into user language
     let meaning = '';
-    if (franResolved && franResolved.translations && franResolved.translations[userLang]) {
+    const localInfinitive = isVerb ? findInLocalDictionary(slWord, 'sl') : null;
+    if (localInfinitive && localInfinitive.translations && localInfinitive.translations[userLang]) {
+      meaning = localInfinitive.translations[userLang];
+    } else if (franResolved && franResolved.translations && franResolved.translations[userLang]) {
       meaning = franResolved.translations[userLang];
     } else if (detectedLang !== 'sl' && detectedLang === userLang) {
       meaning = lookupWord;
@@ -616,9 +718,9 @@ app.get('/api/analyze', async (req, res) => {
     }
 
     // Check if word is a verb (glagol)
-    const isVerb = (franResolved && franResolved.partOfSpeech === 'glagol') || isVerbInfinitive(slWord);
-    if (isVerb) {
-      const verbConjugation = conjugateVerb(slWord);
+    const isVerbFinal = isVerb || (franResolved && franResolved.partOfSpeech === 'glagol') || isVerbInfinitive(slWord);
+    if (isVerbFinal) {
+      const verbConjugation = conjugateVerb(slWord, userLang);
       const headAccent = franData?.accent || slWord;
       const headPhonemic = transcribe(headAccent);
 
@@ -671,6 +773,56 @@ app.get('/api/analyze', async (req, res) => {
           sedanjik_p1: { audioUrl: `/api/tts?text=${encodeURIComponent(verbConjugation.present.dvojina.p1)}`, source: 'neural' },
           preteklik_m: { audioUrl: `/api/tts?text=${encodeURIComponent(verbConjugation.past.dvojina.moski)}`, source: 'neural' },
           preteklik_f: { audioUrl: `/api/tts?text=${encodeURIComponent(verbConjugation.past.dvojina.zenski_srednji)}`, source: 'neural' }
+        }
+      });
+    }
+
+    // Suppress noun declensions for non-inflecting words (zaimek, prislov, predlog, veznik, členek)
+    const nonInflectingList = ['zaimek', 'prislov', 'predlog', 'veznik', 'členek'];
+    const currentPos = franResolved?.partOfSpeech || franData?.partOfSpeech;
+    if (currentPos && nonInflectingList.includes(currentPos)) {
+      const posSpol = franResolved?.spol || franData?.spol || (currentPos.charAt(0).toUpperCase() + currentPos.slice(1));
+      const headAccent = franData?.accent || slWord;
+      const headPhonemic = transcribe(headAccent);
+
+      return res.json({
+        isSentence: false,
+        isVerb: false,
+        original: query,
+        correction,
+        suggestions,
+        detectedLang,
+        slWord,
+        meaning,
+        phonemic: headPhonemic,
+        wordData: {
+          beseda: slWord,
+          spol: posSpol,
+          partOfSpeech: currentPos,
+          nonInflecting: true,
+          ednina_prikaz: slWord,
+          dvojina_prikaz: '',
+          mnozina_prikaz: '',
+          tabela: {
+            imenovalnik: { ednina: slWord, dvojina: '', mnozina: '' },
+            rodilnik: { ednina: slWord, dvojina: '', mnozina: '' },
+            dajalnik: { ednina: slWord, dvojina: '', mnozina: '' },
+            tozilnik: { ednina: slWord, dvojina: '', mnozina: '' },
+            mestnik: { ednina: slWord, dvojina: '', mnozina: '' },
+            orodnik: { ednina: slWord, dvojina: '', mnozina: '' }
+          }
+        },
+        audio: {
+          ednina: await resolveAudio([cleanWordForm(slWord)], slWord)
+        },
+        franData: franData || {
+          accent: headAccent,
+          spol: posSpol,
+          partOfSpeech: currentPos,
+          dictSource: "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+          franUrl: `https://fran.si/iskanje?View=1&Query=${encodeURIComponent(slWord)}`,
+          franjaUrl: `https://franja.si/iskanje?sl=en&tl=sl&q=${encodeURIComponent(query)}`,
+          verified: true
         }
       });
     }
@@ -767,19 +919,52 @@ app.get('/api/audio-stream', async (req, res) => {
 
 // Practice/Quiz check endpoint: compares user answer with expected form,
 // distinguishing true typos from missing carons/diacritics.
+// Supports slash-separated variants as defense-in-depth.
 app.post('/api/quiz/check', (req, res) => {
   const { userInput, expected } = req.body || {};
   if (!userInput || !expected) {
     return res.status(400).json({ error: 'Missing userInput or expected' });
   }
-  const result = diffDiacritics(userInput, expected);
-  res.json(result);
+
+  const rawExpected = String(expected);
+  let candidates = [rawExpected.trim()];
+  if (rawExpected.includes('/')) {
+    const parts = rawExpected.split('/').map(p => p.trim()).filter(Boolean);
+    const prefixMatch = parts[0]?.match(/^(dva|dve)\s+/i);
+    const prefix = prefixMatch ? prefixMatch[0] : '';
+    const expanded = [rawExpected.trim()];
+    for (const part of parts) {
+      expanded.push(part);
+      if (prefix && !part.toLowerCase().startsWith(prefix.toLowerCase())) {
+        expanded.push(prefix + part);
+      }
+      if (prefix && part.toLowerCase().startsWith(prefix.toLowerCase())) {
+        expanded.push(part.replace(new RegExp(`^${prefix}`, 'i'), '').trim());
+      }
+    }
+    candidates = Array.from(new Set(expanded.filter(Boolean)));
+  }
+
+  let bestResult = null;
+  const statusRank = { 'correct': 3, 'diacritics': 2, 'wrong': 1 };
+
+  for (const cand of candidates) {
+    const resCandidate = diffDiacritics(userInput, cand);
+    if (!bestResult || (statusRank[resCandidate.status] || 0) > (statusRank[bestResult.status] || 0)) {
+      bestResult = resCandidate;
+      if (bestResult.status === 'correct') break;
+    }
+  }
+
+  res.json(bestResult || { status: 'wrong', chars: [] });
 });
 
+let server = null;
 if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
-  app.listen(PORT, () => {
+  server = app.listen(PORT, () => {
     console.log(`🚀 SloDvojina strežnik teče na: http://localhost:${PORT}`);
   });
 }
 
+export { server };
 export default app;

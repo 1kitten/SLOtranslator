@@ -18,6 +18,28 @@ function toFranjaLang(lang) {
   return 'en';
 }
 
+// Recognized non-inflecting words to ensure correct POS & spol
+export const KNOWN_NON_INFLECTING = {
+  nekaj: { partOfSpeech: 'zaimek', spol: 'Zaimek' },
+  kdo: { partOfSpeech: 'zaimek', spol: 'Zaimek' },
+  kaj: { partOfSpeech: 'zaimek', spol: 'Zaimek' },
+  danes: { partOfSpeech: 'prislov', spol: 'Prislov' },
+  zelo: { partOfSpeech: 'prislov', spol: 'Prislov' },
+  tukaj: { partOfSpeech: 'prislov', spol: 'Prislov' },
+  včeraj: { partOfSpeech: 'prislov', spol: 'Prislov' },
+  jutri: { partOfSpeech: 'prislov', spol: 'Prislov' },
+  brez: { partOfSpeech: 'predlog', spol: 'Predlog' },
+  pri: { partOfSpeech: 'predlog', spol: 'Predlog' },
+  v: { partOfSpeech: 'predlog', spol: 'Predlog' },
+  za: { partOfSpeech: 'predlog', spol: 'Predlog' },
+  ker: { partOfSpeech: 'veznik', spol: 'Veznik' },
+  in: { partOfSpeech: 'veznik', spol: 'Veznik' },
+  ampak: { partOfSpeech: 'veznik', spol: 'Veznik' },
+  tudi: { partOfSpeech: 'členek', spol: 'Členek' },
+  že: { partOfSpeech: 'členek', spol: 'Členek' },
+  še: { partOfSpeech: 'členek', spol: 'Členek' }
+};
+
 // Load and index local database
 export function initDictionary() {
   try {
@@ -30,7 +52,46 @@ export function initDictionary() {
     dictionaryEntries = [];
   }
 
+  // Ensure recognized non-inflecting words in dictionaryEntries have true POS and spol
+  for (const entry of dictionaryEntries) {
+    const key = (entry.slWord || '').toLowerCase().trim();
+    if (KNOWN_NON_INFLECTING[key]) {
+      const meta = KNOWN_NON_INFLECTING[key];
+      if (!entry.partOfSpeech) entry.partOfSpeech = meta.partOfSpeech;
+      if (!entry.spol || entry.spol === 'Moški spol' || entry.spol === 'Ženski spol' || entry.spol === 'Srednji spol') {
+        entry.spol = meta.spol;
+      }
+    }
+  }
+
   rebuildIndexes();
+
+  // Ensure core irregular verb headword 'dati' is registered to avoid foreign index collision
+  if (!slIndex.has('dati')) {
+    dictionaryEntries.push({
+      slWord: 'dati',
+      accent: 'dáti',
+      spol: null,
+      partOfSpeech: 'glagol',
+      translations: {
+        en: 'to give',
+        de: 'geben',
+        it: 'dare',
+        fr: 'donner',
+        es: 'dar',
+        ru: 'дать',
+        sr: 'dati',
+        hr: 'dati',
+        bs: 'dati',
+        sl: 'dati'
+      },
+      franUrl: 'https://fran.si/iskanje?View=1&Query=dati',
+      source: 'Fran.si (SSKJ)',
+      verified: true
+    });
+    rebuildIndexes();
+  }
+
   console.log(`[FranService] Loaded & indexed ${dictionaryEntries.length} words from Fran.si & Franja.si`);
 }
 
@@ -209,7 +270,24 @@ export async function lookupFranLive(slWord) {
         // Determine part of speech & gender from official Fran metadata
         let spol = null;
         let partOfSpeech = "samostalnik";
-        if (/glagol|\bgl\.\b/i.test(entryHtml) || cleanWord.endsWith('ti') || cleanWord.endsWith('či')) {
+        if (cleanWord.endsWith('ti') || cleanWord.endsWith('či') || /\bglagol\b|title=["']glagol["']/i.test(entryHtml)) {
+          partOfSpeech = "glagol";
+        } else if (/zaimek|\bzaim\.\b|title=["']zaimek["']/i.test(entryHtml)) {
+          partOfSpeech = "zaimek";
+          spol = "Zaimek";
+        } else if (/prislov|\bprisl\.\b|title=["']prislov["']/i.test(entryHtml)) {
+          partOfSpeech = "prislov";
+          spol = "Prislov";
+        } else if (/predlog|\bpredl\.\b|title=["']predlog["']/i.test(entryHtml)) {
+          partOfSpeech = "predlog";
+          spol = "Predlog";
+        } else if (/veznik|\bvezn\.\b|title=["']veznik["']/i.test(entryHtml)) {
+          partOfSpeech = "veznik";
+          spol = "Veznik";
+        } else if (/členek|\bčlen\.\b|title=["']členek["']/i.test(entryHtml)) {
+          partOfSpeech = "členek";
+          spol = "Členek";
+        } else if (/\bgl\.\b/i.test(entryHtml)) {
           partOfSpeech = "glagol";
         } else if (/samostalnik moškega spola|\bmoškega spola\b|title=["']samostalnik moškega spola["']|\bm\b\s*[,.\(]/i.test(entryHtml)) {
           spol = "Moški spol";
@@ -246,11 +324,14 @@ export async function resolveWordWithFran(word, fromLang = 'auto') {
   const local = findInLocalDictionary(clean, fromLang);
   if (local) {
     const isSlMatch = local.slWord.toLowerCase() === clean && (!local.translations || local.translations[fromLang]?.toLowerCase() !== clean);
+    const nonInf = KNOWN_NON_INFLECTING[clean] || KNOWN_NON_INFLECTING[local.slWord.toLowerCase()];
+    const resolvedPos = local.partOfSpeech || nonInf?.partOfSpeech || (['Zaimek', 'Prislov', 'Predlog', 'Veznik', 'Členek'].includes(local.spol) ? local.spol.toLowerCase() : (local.slWord.endsWith('ti') || local.slWord.endsWith('či') ? 'glagol' : (local.spol ? 'samostalnik' : null)));
+    const resolvedSpol = local.spol || nonInf?.spol || (resolvedPos && ['zaimek', 'prislov', 'predlog', 'veznik', 'členek'].includes(resolvedPos) ? resolvedPos.charAt(0).toUpperCase() + resolvedPos.slice(1) : null);
     return {
       slWord: local.slWord,
       accent: local.accent || local.slWord,
-      spol: local.spol,
-      partOfSpeech: local.partOfSpeech || (local.slWord.endsWith('ti') || local.slWord.endsWith('či') ? 'glagol' : 'samostalnik'),
+      spol: resolvedSpol,
+      partOfSpeech: resolvedPos,
       translations: local.translations,
       dictSource: local.source || "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
       franUrl: local.franUrl || `https://fran.si/iskanje?View=1&Query=${encodeURIComponent(local.slWord)}`,
@@ -258,6 +339,24 @@ export async function resolveWordWithFran(word, fromLang = 'auto') {
       verified: true,
       fromDb: true,
       matchedLang: isSlMatch ? 'sl' : fromLang
+    };
+  }
+
+  // Check if un-cached headword is a recognized non-inflecting word
+  if (KNOWN_NON_INFLECTING[clean]) {
+    const meta = KNOWN_NON_INFLECTING[clean];
+    return {
+      slWord: clean,
+      accent: clean,
+      spol: meta.spol,
+      partOfSpeech: meta.partOfSpeech,
+      translations: {},
+      dictSource: "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+      franUrl: `https://fran.si/iskanje?View=1&Query=${encodeURIComponent(clean)}`,
+      franjaUrl: `https://franja.si/iskanje?sl=en&tl=sl&q=${encodeURIComponent(clean)}`,
+      verified: true,
+      fromDb: false,
+      matchedLang: 'sl'
     };
   }
 
@@ -302,6 +401,7 @@ export async function resolveWordWithFran(word, fromLang = 'auto') {
         slWord: slCandidate,
         accent: result.accent,
         spol: result.spol,
+        partOfSpeech: result.partOfSpeech,
         translations: matchedLang !== 'sl' ? { [fromLang]: clean } : {},
         source: result.dictSource,
         franUrl: result.franUrl,

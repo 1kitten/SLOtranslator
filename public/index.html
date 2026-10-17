@@ -273,7 +273,7 @@
           </div>
           <p class="text-xs text-zinc-600 dark:text-zinc-400 mt-1 font-medium" id="verb-meaning-text">--</p>
         </div>
-        <div class="px-2 py-1 rounded bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs font-medium text-zinc-700 dark:text-zinc-300">
+        <div id="verb-badge-text" class="px-2 py-1 rounded bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs font-medium text-zinc-700 dark:text-zinc-300">
           Glagol (Verb)
         </div>
       </div>
@@ -283,17 +283,17 @@
         
         <div class="border-b border-zinc-100 dark:border-zinc-800 pb-2.5 flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <span class="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 uppercase">Dvojina</span>
-            <h3 class="text-xs sm:text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+            <span id="verb-dual-badge" class="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 uppercase">Dvojina</span>
+            <h3 id="verb-dual-title" class="text-xs sm:text-sm font-semibold text-zinc-900 dark:text-zinc-100">
               Spreganje v dvojini glede na slovnično osebo
             </h3>
           </div>
-          <span class="text-[11px] text-zinc-400 font-mono">Dual forms</span>
+          <span id="verb-dual-sub" class="text-[11px] text-zinc-400 font-mono">Dual forms</span>
         </div>
 
         <!-- 1. Present Tense (Sedanjik) -->
         <div class="space-y-1.5">
-          <div class="text-xs font-semibold uppercase tracking-wider text-zinc-500">1. Present Tense (Sedanjik)</div>
+          <div id="verb-tense-sedanjik-title" class="text-xs font-semibold uppercase tracking-wider text-zinc-500">1. Present Tense (Sedanjik)</div>
           <ul class="divide-y divide-zinc-100 dark:divide-zinc-800/60 border border-zinc-200 dark:border-zinc-800 rounded-md" id="verb-sedanjik-list">
             <!-- Injected dynamically -->
           </ul>
@@ -302,8 +302,8 @@
         <!-- 2. Past Tense (Preteklik) -->
         <div class="space-y-1.5">
           <div>
-            <div class="text-xs font-semibold uppercase tracking-wider text-zinc-500">2. Past Tense (Preteklik)</div>
-            <p class="text-[11px] text-zinc-400 mt-0.5">
+            <div id="verb-tense-preteklik-title" class="text-xs font-semibold uppercase tracking-wider text-zinc-500">2. Past Tense (Preteklik)</div>
+            <p id="verb-tense-preteklik-sub" class="text-[11px] text-zinc-400 mt-0.5">
               Oblika se v dvojini spreminja glede na spol dveh oseb/stvari:
             </p>
           </div>
@@ -314,7 +314,7 @@
 
         <!-- 3. Future Tense (Prihodnjik) -->
         <div class="space-y-1.5">
-          <div class="text-xs font-semibold uppercase tracking-wider text-zinc-500">3. Future Tense (Prihodnjik)</div>
+          <div id="verb-tense-prihodnjik-title" class="text-xs font-semibold uppercase tracking-wider text-zinc-500">3. Future Tense (Prihodnjik)</div>
           <ul class="divide-y divide-zinc-100 dark:divide-zinc-800/60 border border-zinc-200 dark:border-zinc-800 rounded-md" id="verb-prihodnjik-list">
             <!-- Injected dynamically -->
           </ul>
@@ -325,20 +325,20 @@
       <!-- Complete Conjugation Overview Table -->
       <div class="bg-white dark:bg-[#121215] p-4 sm:p-5 rounded-lg border border-zinc-200 dark:border-zinc-800 space-y-3">
         <div class="flex items-center justify-between">
-          <h3 class="text-xs sm:text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+          <h3 id="verb-table-title" class="text-xs sm:text-sm font-semibold text-zinc-900 dark:text-zinc-100">
             Preglednica vseh oblik (Sedanjik, Preteklik, Prihodnjik)
           </h3>
-          <span class="text-[11px] text-zinc-400">Klikni katero koli obliko za poslušanje</span>
+          <span id="verb-table-hint" class="text-[11px] text-zinc-400">Klikni katero koli obliko za poslušanje</span>
         </div>
 
         <div class="overflow-x-auto border border-zinc-200 dark:border-zinc-800 rounded-md">
           <table class="w-full text-left border-collapse text-xs">
             <thead>
               <tr class="bg-zinc-50 dark:bg-zinc-900/60 border-b border-zinc-200 dark:border-zinc-800 text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">
-                <th class="p-2.5">Oseba</th>
-                <th class="p-2.5">Ednina</th>
-                <th class="p-2.5 bg-zinc-100/60 dark:bg-zinc-800/40 text-zinc-900 dark:text-zinc-100 font-bold">Dvojina</th>
-                <th class="p-2.5">Množina</th>
+                <th id="verb-th-person" class="p-2.5">Oseba</th>
+                <th id="verb-th-ednina" class="p-2.5">Ednina</th>
+                <th id="verb-th-dvojina" class="p-2.5 bg-zinc-100/60 dark:bg-zinc-800/40 text-zinc-900 dark:text-zinc-100 font-bold">Dvojina</th>
+                <th id="verb-th-mnozina" class="p-2.5">Množina</th>
               </tr>
             </thead>
             <tbody id="verb-full-table-body" class="divide-y divide-zinc-100 dark:divide-zinc-800 font-normal">
@@ -656,9 +656,9 @@
           <table class="w-full text-left border-collapse">
             <thead class="bg-zinc-50 dark:bg-zinc-900/60 border-b border-zinc-200 dark:border-zinc-800 text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">
               <tr>
-                <th class="p-2.5">Znak</th>
-                <th class="p-2.5">Pomen / Izgovor</th>
-                <th class="p-2.5">Primer</th>
+                <th id="phonemic-th-sign" class="p-2.5">Znak</th>
+                <th id="phonemic-th-meaning" class="p-2.5">Pomen / Izgovor</th>
+                <th id="phonemic-th-example" class="p-2.5">Primer</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800 font-mono text-[11px]">
@@ -705,13 +705,13 @@
             </tbody>
           </table>
         </div>
-        <p class="text-[11px] text-zinc-400 leading-relaxed font-sans">
-          Slovenski naglas je prost in jakosten. Naglasna mesta v SloDvojina temeljijo na SSKJ in uradnih virih Inštituta za slovenski jezik Frana Ramovša ZRC SAZU (Fran.si).
+        <p id="phonemic-modal-footer" class="text-[11px] text-zinc-400 leading-relaxed font-sans">
+          Slovenski naglas je prost in jakosten. Naglasna mesta v Dvojčku temeljijo na SSKJ in uradnih virih Inštituta za slovenski jezik Frana Ramovša ZRC SAZU (Fran.si).
         </p>
       </div>
 
       <div class="flex justify-end pt-2 border-t border-zinc-100 dark:border-zinc-800">
-        <button onclick="closePhonemicModal()" class="px-3 py-1.5 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-medium hover:opacity-90 transition-opacity">
+        <button id="phonemic-modal-close" onclick="closePhonemicModal()" class="px-3 py-1.5 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-medium hover:opacity-90 transition-opacity">
           Razumem
         </button>
       </div>
@@ -1234,7 +1234,37 @@
         practiceAlmost: "Skoro tačno — pazi na dijakritike (č, š, ž)!",
         practiceCorrect: "Tačno! Odlično poznavanje dvojine.",
         practiceWrong: "Nije tačno. Pravilan oblik je:",
-        practiceListen: "Poslušaj izgovor"
+        practiceListen: "Poslušaj izgovor",
+        practiceChecking: "Proveravam...",
+        practiceDiffTitle: "Razlika u slovima:",
+        practiceCorrectWithCaron: "Pravilan oblik sa kvačicom:",
+        practiceCorrectIs: "Pravilan oblik je:",
+        practiceError: "Došlo je do greške prilikom provere.",
+        verbBadge: "Glagol",
+        verbDualTitle: "Menjanje u dvojini po gramatičkim licima",
+        verbDualSub: "Oblici dvojine",
+        verbTenseSedanjik: "1. Sadašnje vreme (Sedanjik)",
+        verbTensePreteklik: "2. Prošlo vreme (Preteklik)",
+        verbTensePreteklikSub: "Oblik u dvojini se menja prema rodu dva lica/stvari:",
+        verbTensePrihodnjik: "3. Buduće vreme (Prihodnjik)",
+        verbTableTitle: "Tabela svih oblika (Sedanjik, Preteklik, Prihodnjik)",
+        verbTableHint: "Kliknite na bilo koji oblik za slušanje",
+        thPerson: "Lice",
+        p1Sedanjik: "1. lice (Sedanjik)",
+        p2Sedanjik: "2. lice (Sedanjik)",
+        p3Sedanjik: "3. lice (Sedanjik)",
+        p1Preteklik: "1. lice (Preteklik)",
+        p1Prihodnjik: "1. lice (Prihodnjik)",
+        examplePrefix: "npr.",
+        phonemicModalTitle: "Slovenački fonemski zapis i akcenti",
+        phonemicModalDesc: "Vodič kroz akcenatske oznake SSKJ i Međunarodnu fonetsku abecedu (IPA).",
+        phonemicThSign: "Znak",
+        phonemicThMeaning: "Značenje / Izgovor",
+        phonemicThExample: "Primer",
+        phonemicModalFooter: "Slovenački akcenat je slobodan i dinamički. Akcenatska mesta u Dvojčku temelje se na SSKJ i zvaničnim izvorima Instituta za slovenački jezik Frana Ramovša ZRC SAZU (Fran.si).",
+        phonemicClose: "Razumem",
+        slovenianLang: "Slovenački",
+        translatedFrom: "Prevedeno sa:"
       },
       en: {
         didYouMean: "Did you mean:",
@@ -1250,7 +1280,37 @@
         practiceAlmost: "Almost correct — watch the diacritics (č, š, ž)!",
         practiceCorrect: "Correct! Excellent dual mastery.",
         practiceWrong: "Not quite. The correct dual form is:",
-        practiceListen: "Listen to pronunciation"
+        practiceListen: "Listen to pronunciation",
+        practiceChecking: "Checking...",
+        practiceDiffTitle: "Character difference:",
+        practiceCorrectWithCaron: "Correct form with caron:",
+        practiceCorrectIs: "The correct form is:",
+        practiceError: "An error occurred during verification.",
+        verbBadge: "Verb",
+        verbDualTitle: "Dual conjugation by grammatical person",
+        verbDualSub: "Dual forms",
+        verbTenseSedanjik: "1. Present Tense (Sedanjik)",
+        verbTensePreteklik: "2. Past Tense (Preteklik)",
+        verbTensePreteklikSub: "The dual form changes according to gender of two persons/things:",
+        verbTensePrihodnjik: "3. Future Tense (Prihodnjik)",
+        verbTableTitle: "Overview of all forms (Present, Past, Future)",
+        verbTableHint: "Click any form to listen",
+        thPerson: "Person",
+        p1Sedanjik: "1st person (Present)",
+        p2Sedanjik: "2nd person (Present)",
+        p3Sedanjik: "3rd person (Present)",
+        p1Preteklik: "1st person (Past)",
+        p1Prihodnjik: "1st person (Future)",
+        examplePrefix: "e.g.",
+        phonemicModalTitle: "Slovenian Phonemic Notation and Accents",
+        phonemicModalDesc: "Guide to SSKJ accent marks and the International Phonetic Alphabet (IPA).",
+        phonemicThSign: "Sign",
+        phonemicThMeaning: "Meaning / Pronunciation",
+        phonemicThExample: "Example",
+        phonemicModalFooter: "Slovenian accent is free and dynamic. Accent placements in Dvojček are based on SSKJ and official sources of the Fran Ramovš Institute of the Slovenian Language ZRC SAZU (Fran.si).",
+        phonemicClose: "Got it",
+        slovenianLang: "Slovenian",
+        translatedFrom: "Translated from:"
       },
       hr: {
         didYouMean: "Jeste li mislili:",
@@ -1266,7 +1326,37 @@
         practiceAlmost: "Zamalo točno — pripazite na kvačice (č, š, ž)!",
         practiceCorrect: "Točno! Izvrsno.",
         practiceWrong: "Nije točno. Pravilan oblik je:",
-        practiceListen: "Poslušaj izgovor"
+        practiceListen: "Poslušaj izgovor",
+        practiceChecking: "Provjeravam...",
+        practiceDiffTitle: "Razlika u slovima:",
+        practiceCorrectWithCaron: "Pravilan oblik s kvačicom:",
+        practiceCorrectIs: "Pravilan oblik je:",
+        practiceError: "Došlo je do pogreške pri provjeri.",
+        verbBadge: "Glagol",
+        verbDualTitle: "Sprezanje u dvojini po gramatičkim licima",
+        verbDualSub: "Oblici dvojine",
+        verbTenseSedanjik: "1. Sadašnje vrijeme (Sedanjik)",
+        verbTensePreteklik: "2. Prošlo vrijeme (Preteklik)",
+        verbTensePreteklikSub: "Oblik u dvojini mijenja se prema rodu dviju osoba/stvari:",
+        verbTensePrihodnjik: "3. Buduće vrijeme (Prihodnjik)",
+        verbTableTitle: "Tablica svih oblika (Sedanjik, Preteklik, Prihodnjik)",
+        verbTableHint: "Kliknite na bilo koji oblik za slušanje",
+        thPerson: "Lice",
+        p1Sedanjik: "1. lice (Sedanjik)",
+        p2Sedanjik: "2. lice (Sedanjik)",
+        p3Sedanjik: "3. lice (Sedanjik)",
+        p1Preteklik: "1. lice (Preteklik)",
+        p1Prihodnjik: "1. lice (Prihodnjik)",
+        examplePrefix: "npr.",
+        phonemicModalTitle: "Slovenski fonemski zapis i naglasci",
+        phonemicModalDesc: "Vodič kroz naglasne oznake SSKJ i Međunarodnu fonetsku abecedu (IPA).",
+        phonemicThSign: "Znak",
+        phonemicThMeaning: "Značenje / Izgovor",
+        phonemicThExample: "Primjer",
+        phonemicModalFooter: "Slovenski naglasak je slobodan i dinamički. Naglasna mjesta u Dvojčku temelje se na SSKJ i službenim izvorima Instituta za slovenski jezik Frana Ramovša ZRC SAZU (Fran.si).",
+        phonemicClose: "Razumijem",
+        slovenianLang: "Slovenski",
+        translatedFrom: "Prevedeno s:"
       },
       bs: {
         didYouMean: "Da li ste mislili:",
@@ -1282,7 +1372,37 @@
         practiceAlmost: "Skoro tačno — pazi na kvačice (č, š, ž)!",
         practiceCorrect: "Tačno! Odlično.",
         practiceWrong: "Nije tačno. Pravilan oblik je:",
-        practiceListen: "Poslušaj izgovor"
+        practiceListen: "Poslušaj izgovor",
+        practiceChecking: "Provjeravam...",
+        practiceDiffTitle: "Razlika u slovima:",
+        practiceCorrectWithCaron: "Pravilan oblik s kvačicom:",
+        practiceCorrectIs: "Pravilan oblik je:",
+        practiceError: "Došlo je do greške pri provjeri.",
+        verbBadge: "Glagol",
+        verbDualTitle: "Konjugacija u dvojini po gramatičkim licima",
+        verbDualSub: "Oblici dvojine",
+        verbTenseSedanjik: "1. Sadašnje vrijeme (Sedanjik)",
+        verbTensePreteklik: "2. Prošlo vrijeme (Preteklik)",
+        verbTensePreteklikSub: "Oblik u dvojini mijenja se prema rodu dviju osoba/stvari:",
+        verbTensePrihodnjik: "3. Buduće vrijeme (Prihodnjik)",
+        verbTableTitle: "Tabela svih oblika (Sedanjik, Preteklik, Prihodnjik)",
+        verbTableHint: "Kliknite na bilo koji oblik za slušanje",
+        thPerson: "Lice",
+        p1Sedanjik: "1. lice (Sedanjik)",
+        p2Sedanjik: "2. lice (Sedanjik)",
+        p3Sedanjik: "3. lice (Sedanjik)",
+        p1Preteklik: "1. lice (Preteklik)",
+        p1Prihodnjik: "1. lice (Prihodnjik)",
+        examplePrefix: "npr.",
+        phonemicModalTitle: "Slovenski fonemski zapis i naglasci",
+        phonemicModalDesc: "Vodič kroz naglasne oznake SSKJ i Međunarodnu fonetsku abecedu (IPA).",
+        phonemicThSign: "Znak",
+        phonemicThMeaning: "Značenje / Izgovor",
+        phonemicThExample: "Primjer",
+        phonemicModalFooter: "Slovenski naglasak je slobodan i dinamički. Naglasna mjesta u Dvojčku temelje se na SSKJ i zvaničnim izvorima Instituta za slovenski jezik Frana Ramovša ZRC SAZU (Fran.si).",
+        phonemicClose: "Razumijem",
+        slovenianLang: "Slovenski",
+        translatedFrom: "Prevedeno sa:"
       },
       de: {
         didYouMean: "Meinten Sie:",
@@ -1298,7 +1418,37 @@
         practiceAlmost: "Fast richtig — achten Sie auf die Hatscheks (č, š, ž)!",
         practiceCorrect: "Richtig! Ausgezeichnet.",
         practiceWrong: "Nicht ganz. Die richtige Dualform lautet:",
-        practiceListen: "Aussprache anhören"
+        practiceListen: "Aussprache anhören",
+        practiceChecking: "Wird überprüft...",
+        practiceDiffTitle: "Buchstabenunterschied:",
+        practiceCorrectWithCaron: "Richtige Form mit Hatschek:",
+        practiceCorrectIs: "Die richtige Form lautet:",
+        practiceError: "Bei der Überprüfung ist ein Fehler aufgetreten.",
+        verbBadge: "Verb",
+        verbDualTitle: "Konjugation im Dual nach grammatischer Person",
+        verbDualSub: "Dual-Formen",
+        verbTenseSedanjik: "1. Präsens (Sedanjik)",
+        verbTensePreteklik: "2. Vergangenheit (Preteklik)",
+        verbTensePreteklikSub: "Die Form im Dual ändert sich nach dem Geschlecht zweier Personen/Dinge:",
+        verbTensePrihodnjik: "3. Futur (Prihodnjik)",
+        verbTableTitle: "Übersicht aller Formen (Präsens, Vergangenheit, Futur)",
+        verbTableHint: "Klicken Sie auf eine Form zum Anhören",
+        thPerson: "Person",
+        p1Sedanjik: "1. Person (Präsens)",
+        p2Sedanjik: "2. Person (Präsens)",
+        p3Sedanjik: "3. Person (Präsens)",
+        p1Preteklik: "1. Person (Vergangenheit)",
+        p1Prihodnjik: "1. Person (Futur)",
+        examplePrefix: "z. B.",
+        phonemicModalTitle: "Slowenische phonemische Notation und Akzente",
+        phonemicModalDesc: "Leitfaden zu SSKJ-Akzentzeichen und dem Internationalen Phonetischen Alphabet (IPA).",
+        phonemicThSign: "Zeichen",
+        phonemicThMeaning: "Bedeutung / Aussprache",
+        phonemicThExample: "Beispiel",
+        phonemicModalFooter: "Der slowenische Akzent ist frei und dynamisch. Die Akzente in Dvojček basieren auf dem SSKJ und offiziellen Quellen des Fran-Ramovš-Instituts für slowenische Sprache ZRC SAZU (Fran.si).",
+        phonemicClose: "Verstanden",
+        slovenianLang: "Slowenisch",
+        translatedFrom: "Übersetzt aus:"
       },
       it: {
         didYouMean: "Forse cercavi:",
@@ -1314,7 +1464,37 @@
         practiceAlmost: "Quasi corretto — attenzione ai segni diacritici (č, š, ž)!",
         practiceCorrect: "Esatto! Ottimo.",
         practiceWrong: "Non esatto. La forma corretta è:",
-        practiceListen: "Ascolta pronuncia"
+        practiceListen: "Ascolta pronuncia",
+        practiceChecking: "Verifica in corso...",
+        practiceDiffTitle: "Differenza di lettere:",
+        practiceCorrectWithCaron: "Forma corretta con segno diacritico:",
+        practiceCorrectIs: "La forma corretta è:",
+        practiceError: "Si è verificato un errore durante la verifica.",
+        verbBadge: "Verbo",
+        verbDualTitle: "Coniugazione al duale per persona grammaticale",
+        verbDualSub: "Forme duali",
+        verbTenseSedanjik: "1. Presente (Sedanjik)",
+        verbTensePreteklik: "2. Passato (Preteklik)",
+        verbTensePreteklikSub: "La forma duale varia a seconda del genere di due persone/cose:",
+        verbTensePrihodnjik: "3. Futuro (Prihodnjik)",
+        verbTableTitle: "Tabella di tutte le forme (Presente, Passato, Futuro)",
+        verbTableHint: "Clicca su qualsiasi forma per ascoltare",
+        thPerson: "Persona",
+        p1Sedanjik: "1ª persona (Presente)",
+        p2Sedanjik: "2ª persona (Presente)",
+        p3Sedanjik: "3ª persona (Presente)",
+        p1Preteklik: "1ª persona (Passato)",
+        p1Prihodnjik: "1ª persona (Futuro)",
+        examplePrefix: "es.",
+        phonemicModalTitle: "Notazione fonemica slovena e accenti",
+        phonemicModalDesc: "Guida ai segni di accento SSKJ e all'Alfabeto Fonetico Internazionale (IPA).",
+        phonemicThSign: "Segno",
+        phonemicThMeaning: "Significato / Pronuncia",
+        phonemicThExample: "Esempio",
+        phonemicModalFooter: "L'accento sloveno è libero e dinamico. Gli accenti in Dvojček si basano sul SSKJ e sulle fonti ufficiali dell'Istituto per la lingua slovena Fran Ramovš ZRC SAZU (Fran.si).",
+        phonemicClose: "Ho capito",
+        slovenianLang: "Sloveno",
+        translatedFrom: "Tradotto da:"
       },
       es: {
         didYouMean: "¿Quiso decir:",
@@ -1330,7 +1510,37 @@
         practiceAlmost: "¡Casi correcto! Cuidado con los signos diacríticos (č, š, ž).",
         practiceCorrect: "¡Correcto! Excelente.",
         practiceWrong: "No es correcto. La forma dual es:",
-        practiceListen: "Escuchar pronunciación"
+        practiceListen: "Escuchar pronunciación",
+        practiceChecking: "Comprobando...",
+        practiceDiffTitle: "Diferencia en letras:",
+        practiceCorrectWithCaron: "Forma correcta con carón:",
+        practiceCorrectIs: "La forma correcta es:",
+        practiceError: "Ocurrió un error durante la verificación.",
+        verbBadge: "Verbo",
+        verbDualTitle: "Conjugación en dual según la persona gramatical",
+        verbDualSub: "Formas duales",
+        verbTenseSedanjik: "1. Presente (Sedanjik)",
+        verbTensePreteklik: "2. Pasado (Preteklik)",
+        verbTensePreteklikSub: "La forma dual cambia según el género de dos personas/cosas:",
+        verbTensePrihodnjik: "3. Futuro (Prihodnjik)",
+        verbTableTitle: "Tabla de todas las formas (Presente, Pasado, Futuro)",
+        verbTableHint: "Haz clic en cualquier forma para escuchar",
+        thPerson: "Persona",
+        p1Sedanjik: "1.ª persona (Presente)",
+        p2Sedanjik: "2.ª persona (Presente)",
+        p3Sedanjik: "3.ª persona (Presente)",
+        p1Preteklik: "1.ª persona (Pasado)",
+        p1Prihodnjik: "1.ª persona (Futuro)",
+        examplePrefix: "ej.",
+        phonemicModalTitle: "Notación fonémica eslovena y acentos",
+        phonemicModalDesc: "Guía de los signos de acento SSKJ y del Alfabeto Fonético Internacional (IPA).",
+        phonemicThSign: "Signo",
+        phonemicThMeaning: "Significado / Pronunciación",
+        phonemicThExample: "Ejemplo",
+        phonemicModalFooter: "El acento esloveno es libre y dinámico. La acentuación en Dvojček se basa en el SSKJ y fuentes oficiales del Instituto de la Lengua Eslovena Fran Ramovš ZRC SAZU (Fran.si).",
+        phonemicClose: "Entendido",
+        slovenianLang: "Esloveno",
+        translatedFrom: "Traducido de:"
       },
       fr: {
         didYouMean: "Vouliez-vous dire :",
@@ -1346,7 +1556,37 @@
         practiceAlmost: "Presque correct — attention aux signes diacritiques (č, š, ž) !",
         practiceCorrect: "Correct ! Excellent.",
         practiceWrong: "Pas tout à fait. La forme correcte est :",
-        practiceListen: "Écouter la prononciation"
+        practiceListen: "Écouter la prononciation",
+        practiceChecking: "Vérification en cours...",
+        practiceDiffTitle: "Différence de lettres :",
+        practiceCorrectWithCaron: "Forme correcte avec caron :",
+        practiceCorrectIs: "La forme correcte est :",
+        practiceError: "Une erreur s'est produite lors de la vérification.",
+        verbBadge: "Verbe",
+        verbDualTitle: "Conjugaison au duel selon la personne grammaticale",
+        verbDualSub: "Formes du duel",
+        verbTenseSedanjik: "1. Présent (Sedanjik)",
+        verbTensePreteklik: "2. Passé (Preteklik)",
+        verbTensePreteklikSub: "La forme du duel varie selon le genre de deux personnes/choses :",
+        verbTensePrihodnjik: "3. Futur (Prihodnjik)",
+        verbTableTitle: "Tableau de toutes les formes (Présent, Passé, Futur)",
+        verbTableHint: "Cliquez sur une forme pour écouter",
+        thPerson: "Personne",
+        p1Sedanjik: "1re personne (Présent)",
+        p2Sedanjik: "2e personne (Présent)",
+        p3Sedanjik: "3e personne (Présent)",
+        p1Preteklik: "1re personne (Passé)",
+        p1Prihodnjik: "1re personne (Futur)",
+        examplePrefix: "ex.",
+        phonemicModalTitle: "Notation phonémique slovène et accents",
+        phonemicModalDesc: "Guide des accents SSKJ et de l'Alphabet Phonétique International (API).",
+        phonemicThSign: "Signe",
+        phonemicThMeaning: "Signification / Prononciation",
+        phonemicThExample: "Exemple",
+        phonemicModalFooter: "L'accent slovène est libre et dynamique. Les accents dans Dvojček sont basés sur le SSKJ et les sources officielles de l'Institut de la langue slovène Fran Ramovš ZRC SAZU (Fran.si).",
+        phonemicClose: "Compris",
+        slovenianLang: "Slovène",
+        translatedFrom: "Traduit de :"
       },
       ru: {
         didYouMean: "Возможно, вы имели в виду:",
@@ -1362,7 +1602,37 @@
         practiceAlmost: "Почти правильно — обратите внимание на гачеки (č, š, ž)!",
         practiceCorrect: "Правильно! Отлично.",
         practiceWrong: "Не совсем так. Правильная форма:",
-        practiceListen: "Слушать произношение"
+        practiceListen: "Слушать произношение",
+        practiceChecking: "Проверяю...",
+        practiceDiffTitle: "Разница в буквах:",
+        practiceCorrectWithCaron: "Правильная форма с гачеком:",
+        practiceCorrectIs: "Правильная форма:",
+        practiceError: "Произошла ошибка при проверке.",
+        verbBadge: "Глагол",
+        verbDualTitle: "Спряжение в двойственном числе по лицам",
+        verbDualSub: "Формы двойственного числа",
+        verbTenseSedanjik: "1. Настоящее время (Sedanjik)",
+        verbTensePreteklik: "2. Прошедшее время (Preteklik)",
+        verbTensePreteklikSub: "Форма двойственного числа изменяется по родам двух лиц/вещей:",
+        verbTensePrihodnjik: "3. Будущее время (Prihodnjik)",
+        verbTableTitle: "Таблица всех форм (настоящее, прошедшее, будущее время)",
+        verbTableHint: "Нажмите на любую форму, чтобы послушать",
+        thPerson: "Лицо",
+        p1Sedanjik: "1-е лицо (Настоящее)",
+        p2Sedanjik: "2-е лицо (Настоящее)",
+        p3Sedanjik: "3-е лицо (Настоящее)",
+        p1Preteklik: "1-е лицо (Прошедшее)",
+        p1Prihodnjik: "1-е лицо (Будущее)",
+        examplePrefix: "напр.",
+        phonemicModalTitle: "Словенская фонемная запись и ударения",
+        phonemicModalDesc: "Справочник по знакам ударения SSKJ и Международному фонетическому алфавиту (IPA).",
+        phonemicThSign: "Знак",
+        phonemicThMeaning: "Значение / Произношение",
+        phonemicThExample: "Пример",
+        phonemicModalFooter: "Словенское ударение является свободным и динамическим. Ударения в Dvojček основаны на SSKJ и официальных источниках Института словенского языка им. Франа Рамовша ZRC SAZU (Fran.si).",
+        phonemicClose: "Понятно",
+        slovenianLang: "Словенский",
+        translatedFrom: "Переведено с:"
       },
       sl: {
         didYouMean: "Ali ste mislili:",
@@ -1378,7 +1648,37 @@
         practiceAlmost: "Skoraj pravilno — pazi na strešice (č, š, ž)!",
         practiceCorrect: "Pravilno! Odlično poznavanje dvojine.",
         practiceWrong: "Poskusi znova. Pravilna oblika je:",
-        practiceListen: "Poslušaj izgovor"
+        practiceListen: "Poslušaj izgovor",
+        practiceChecking: "Preverjam...",
+        practiceDiffTitle: "Razlika v črkah:",
+        practiceCorrectWithCaron: "Pravilna oblika s strešico:",
+        practiceCorrectIs: "Pravilna oblika je:",
+        practiceError: "Pri preverjanju je prišlo do napake.",
+        verbBadge: "Glagol",
+        verbDualTitle: "Spreganje v dvojini glede na slovnično osebo",
+        verbDualSub: "Oblike dvojine",
+        verbTenseSedanjik: "1. Sedanjik (Sedanjik)",
+        verbTensePreteklik: "2. Preteklik (Preteklik)",
+        verbTensePreteklikSub: "Oblika se v dvojini spreminja glede na spol dveh oseb/stvari:",
+        verbTensePrihodnjik: "3. Prihodnjik (Prihodnjik)",
+        verbTableTitle: "Preglednica vseh oblik (Sedanjik, Preteklik, Prihodnjik)",
+        verbTableHint: "Klikni katero koli obliko za poslušanje",
+        thPerson: "Oseba",
+        p1Sedanjik: "1. oseba (Sedanjik)",
+        p2Sedanjik: "2. oseba (Sedanjik)",
+        p3Sedanjik: "3. oseba (Sedanjik)",
+        p1Preteklik: "1. oseba (Preteklik)",
+        p1Prihodnjik: "1. oseba (Prihodnjik)",
+        examplePrefix: "npr.",
+        phonemicModalTitle: "Slovenski fonemski zapis in naglasi",
+        phonemicModalDesc: "Vodič po naglasnih znamenjih SSKJ in Mednarodni fonetični abecedi (IPA).",
+        phonemicThSign: "Znak",
+        phonemicThMeaning: "Pomen / Izgovor",
+        phonemicThExample: "Primer",
+        phonemicModalFooter: "Slovenski naglas je prost in jakosten. Naglasna mesta v Dvojčku temeljijo na SSKJ in uradnih virih Inštituta za slovenski jezik Frana Ramovša ZRC SAZU (Fran.si).",
+        phonemicClose: "Razumem",
+        slovenianLang: "Slovenščina",
+        translatedFrom: "Prevedeno iz:"
       }
     };
     Object.keys(extraI18n).forEach(l => {
@@ -1445,18 +1745,30 @@
       document.getElementById('lang-modal').classList.add('hidden');
     }
 
-    function selectLanguage(lang) {
+    async function selectLanguage(lang) {
       if (!i18nData[lang]) return;
       localStorage.setItem('slodvojina_lang', lang);
       applyLanguage(lang);
       closeLangModal();
 
-      // If results are currently showing, re-render them with new language
+      // If results are currently showing, re-fetch with active UI language to update translated meaning
       if (currentAnalysis) {
-        if (currentAnalysis.isSentence) {
-          renderSentenceUI(currentAnalysis);
-        } else {
-          renderWordUI(currentAnalysis);
+        const query = currentAnalysis.isSentence
+          ? (currentAnalysis.original || currentAnalysis.slText)
+          : (currentAnalysis.slWord || currentAnalysis.original);
+        if (query) {
+          try {
+            const res = await fetch(`/api/analyze?q=${encodeURIComponent(query)}&ui=${encodeURIComponent(lang)}`);
+            if (res.ok) {
+              const data = await res.json();
+              currentAnalysis = data;
+              if (data.isSentence) renderSentenceUI(data);
+              else if (data.isVerb) renderVerbUI(data);
+              else renderWordUI(data);
+            }
+          } catch (err) {
+            console.error('Failed to re-fetch analysis on language switch:', err);
+          }
         }
       }
     }
@@ -1541,8 +1853,59 @@
       const practiceCheckLabel = document.getElementById('practice-check-label');
       if (practiceCheckLabel) practiceCheckLabel.innerText = t.practiceCheck || 'Preveri';
 
-      // Re-render active view if analysis exists
-      if (currentAnalysis) {
+      const practicePrompt = document.getElementById('practice-prompt-text');
+      if (practicePrompt && currentPracticeWord) {
+        practicePrompt.innerHTML = `${t.practicePrompt || 'Vpišite obliko za dvojino za besedo:'} <strong class="text-zinc-900 dark:text-zinc-100">${currentPracticeWord}</strong>`;
+      }
+
+      // Verb UI Labels
+      const verbBadge = document.getElementById('verb-badge-text');
+      if (verbBadge && t.verbBadge) verbBadge.innerText = t.verbBadge;
+      const verbDualBadge = document.getElementById('verb-dual-badge');
+      if (verbDualBadge && t.thDvojina) verbDualBadge.innerText = t.thDvojina;
+      const verbDualTitle = document.getElementById('verb-dual-title');
+      if (verbDualTitle && t.verbDualTitle) verbDualTitle.innerText = t.verbDualTitle;
+      const verbDualSub = document.getElementById('verb-dual-sub');
+      if (verbDualSub && t.verbDualSub) verbDualSub.innerText = t.verbDualSub;
+      const verbTenseSed = document.getElementById('verb-tense-sedanjik-title');
+      if (verbTenseSed && t.verbTenseSedanjik) verbTenseSed.innerText = t.verbTenseSedanjik;
+      const verbTensePret = document.getElementById('verb-tense-preteklik-title');
+      if (verbTensePret && t.verbTensePreteklik) verbTensePret.innerText = t.verbTensePreteklik;
+      const verbTensePretSub = document.getElementById('verb-tense-preteklik-sub');
+      if (verbTensePretSub && t.verbTensePreteklikSub) verbTensePretSub.innerText = t.verbTensePreteklikSub;
+      const verbTensePrih = document.getElementById('verb-tense-prihodnjik-title');
+      if (verbTensePrih && t.verbTensePrihodnjik) verbTensePrih.innerText = t.verbTensePrihodnjik;
+      const verbTableTitle = document.getElementById('verb-table-title');
+      if (verbTableTitle && t.verbTableTitle) verbTableTitle.innerText = t.verbTableTitle;
+      const verbTableHint = document.getElementById('verb-table-hint');
+      if (verbTableHint && t.verbTableHint) verbTableHint.innerText = t.verbTableHint;
+      const verbThPerson = document.getElementById('verb-th-person');
+      if (verbThPerson && (t.thPerson || t.thCase)) verbThPerson.innerText = t.thPerson || t.thCase || 'Oseba';
+      const verbThEdnina = document.getElementById('verb-th-ednina');
+      if (verbThEdnina && t.thEdnina) verbThEdnina.innerText = t.thEdnina;
+      const verbThDvojina = document.getElementById('verb-th-dvojina');
+      if (verbThDvojina && t.thDvojina) verbThDvojina.innerText = t.thDvojina;
+      const verbThMnozina = document.getElementById('verb-th-mnozina');
+      if (verbThMnozina && t.thMnozina) verbThMnozina.innerText = t.thMnozina;
+
+      // IPA Modal Labels
+      const phonemicTitle = document.getElementById('phonemic-modal-title');
+      if (phonemicTitle && t.phonemicModalTitle) phonemicTitle.innerText = t.phonemicModalTitle;
+      const phonemicDesc = document.getElementById('phonemic-modal-desc');
+      if (phonemicDesc && t.phonemicModalDesc) phonemicDesc.innerText = t.phonemicModalDesc;
+      const phonemicThSign = document.getElementById('phonemic-th-sign');
+      if (phonemicThSign && t.phonemicThSign) phonemicThSign.innerText = t.phonemicThSign;
+      const phonemicThMeaning = document.getElementById('phonemic-th-meaning');
+      if (phonemicThMeaning && t.phonemicThMeaning) phonemicThMeaning.innerText = t.phonemicThMeaning;
+      const phonemicThExample = document.getElementById('phonemic-th-example');
+      if (phonemicThExample && t.phonemicThExample) phonemicThExample.innerText = t.phonemicThExample;
+      const phonemicFooter = document.getElementById('phonemic-modal-footer');
+      if (phonemicFooter && t.phonemicModalFooter) phonemicFooter.innerText = t.phonemicModalFooter;
+      const phonemicClose = document.getElementById('phonemic-modal-close');
+      if (phonemicClose && t.phonemicClose) phonemicClose.innerText = t.phonemicClose;
+
+      // Re-render active view if analysis exists and was found
+      if (currentAnalysis && !currentAnalysis.notFound) {
         if (currentAnalysis.isSentence) renderSentenceUI(currentAnalysis);
         else if (currentAnalysis.isVerb) renderVerbUI(currentAnalysis);
         else renderWordUI(currentAnalysis);
@@ -1797,7 +2160,7 @@
       const { original, detectedLang, slWord, meaning, verbData, franData } = data;
 
       // Meta & Header
-      let langDisplay = detectedLang === 'sl' ? 'Slovenščina' : `Prevedeno iz: ${detectedLang.toUpperCase()}`;
+      let langDisplay = detectedLang === 'sl' ? (t.slovenianLang || 'Slovenščina') : `${t.translatedFrom || 'Prevedeno iz:'} ${detectedLang.toUpperCase()}`;
       document.getElementById('verb-detected-lang-tag').innerText = langDisplay;
       
       if (detectedLang !== 'sl' && original.toLowerCase() !== slWord.toLowerCase()) {
@@ -1852,7 +2215,7 @@
           </div>
           <button onclick="playDirectText('${item.audioText}', this)" class="px-2 py-0.5 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 rounded border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-[11px] flex items-center gap-1 transition-colors">
             <i class="fa-solid fa-volume-high text-[10px]"></i>
-            <span>Zvok</span>
+            <span>${t.naturalVoice || 'Zvok'}</span>
           </button>
         `;
         sedList.appendChild(li);
@@ -1869,13 +2232,13 @@
             <span class="font-medium text-zinc-500 text-[11px]">${item.genderLabel}</span>
             <button onclick="playDirectText('${item.audioText}', this)" class="px-2 py-0.5 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 rounded border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-[11px] flex items-center gap-1 transition-colors">
               <i class="fa-solid fa-volume-high text-[10px]"></i>
-              <span>Zvok</span>
+              <span>${t.naturalVoice || 'Zvok'}</span>
             </button>
           </div>
           <div class="font-semibold text-zinc-900 dark:text-zinc-100 pl-1 flex items-baseline gap-2 flex-wrap">
             <span>${item.participle}</span>
             ${item.phonemic ? `<span class="font-mono text-[10px] text-zinc-500 dark:text-zinc-400 font-normal">${item.phonemic.respelling}</span>` : ''}
-            <span class="text-zinc-400 font-normal text-[11px] italic">(npr. ${item.example})</span>
+            <span class="text-zinc-400 font-normal text-[11px] italic">(${t.examplePrefix || 'npr.'} ${item.example})</span>
           </div>
         `;
         pretList.appendChild(li);
@@ -1896,7 +2259,7 @@
           </div>
           <button onclick="playDirectText('${item.audioText}', this)" class="px-2 py-0.5 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 rounded border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-[11px] flex items-center gap-1 transition-colors">
             <i class="fa-solid fa-volume-high text-[10px]"></i>
-            <span>Zvok</span>
+            <span>${t.naturalVoice || 'Zvok'}</span>
           </button>
         `;
         prihList.appendChild(li);
@@ -1908,31 +2271,31 @@
 
       const rows = [
         {
-          label: "1. oseba (Sedanjik)",
+          label: t.p1Sedanjik || "1. oseba (Sedanjik)",
           ednina: verbData.sedanjik.ednina.p1,
           dvojina: verbData.sedanjik.dvojina.p1,
           mnozina: verbData.sedanjik.mnozina.p1
         },
         {
-          label: "2. oseba (Sedanjik)",
+          label: t.p2Sedanjik || "2. oseba (Sedanjik)",
           ednina: verbData.sedanjik.ednina.p2,
           dvojina: verbData.sedanjik.dvojina.p2,
           mnozina: verbData.sedanjik.mnozina.p2
         },
         {
-          label: "3. oseba (Sedanjik)",
+          label: t.p3Sedanjik || "3. oseba (Sedanjik)",
           ednina: verbData.sedanjik.ednina.p3,
           dvojina: verbData.sedanjik.dvojina.p3,
           mnozina: verbData.sedanjik.mnozina.p3
         },
         {
-          label: "1. oseba (Preteklik)",
+          label: t.p1Preteklik || "1. oseba (Preteklik)",
           ednina: verbData.preteklik.ednina.p1,
           dvojina: verbData.preteklik.dvojina.p1,
           mnozina: verbData.preteklik.mnozina.p1
         },
         {
-          label: "1. oseba (Prihodnjik)",
+          label: t.p1Prihodnjik || "1. oseba (Prihodnjik)",
           ednina: verbData.prihodnjik.ednina.p1,
           dvojina: verbData.prihodnjik.dvojina.p1,
           mnozina: verbData.prihodnjik.mnozina.p1
@@ -1976,7 +2339,7 @@
       const { original, detectedLang, wordData, audio, meaning } = data;
 
       // Header & Meta
-      let langDisplay = detectedLang === 'sl' ? 'Slovenščina' : `Prevedeno iz: ${detectedLang.toUpperCase()}`;
+      let langDisplay = detectedLang === 'sl' ? (t.slovenianLang || 'Slovenščina') : `${t.translatedFrom || 'Prevedeno iz:'} ${detectedLang.toUpperCase()}`;
       document.getElementById('detected-lang-tag').innerText = langDisplay;
       
       if (detectedLang !== 'sl' && original.toLowerCase() !== wordData.beseda.toLowerCase()) {
@@ -2189,11 +2552,35 @@
       const t = i18nData[currentLang] || i18nData.sr;
       currentPracticeWord = wordData.beseda;
       
-      const candidates = [
+      const rawSources = [
         wordData.dvojina_prikaz,
         wordData.tabela?.imenovalnik?.dvojina
       ].filter(Boolean);
-      currentPracticeExpected = Array.from(new Set(candidates));
+
+      const expanded = [];
+      for (const src of rawSources) {
+        if (src.includes('/')) {
+          const parts = src.split('/').map(p => p.trim()).filter(Boolean);
+          const prefixMatch = parts[0]?.match(/^(dva|dve)\s+/i);
+          const prefix = prefixMatch ? prefixMatch[0] : '';
+          for (const part of parts) {
+            expanded.push(part);
+            if (prefix && !part.toLowerCase().startsWith(prefix.toLowerCase())) {
+              expanded.push(prefix + part);
+            }
+            if (prefix && part.toLowerCase().startsWith(prefix.toLowerCase())) {
+              expanded.push(part.replace(new RegExp(`^${prefix}`, 'i'), '').trim());
+            }
+          }
+        } else {
+          expanded.push(src.trim());
+          const prefixMatch = src.match(/^(dva|dve)\s+/i);
+          if (prefixMatch) {
+            expanded.push(src.replace(new RegExp(`^${prefixMatch[0]}`, 'i'), '').trim());
+          }
+        }
+      }
+      currentPracticeExpected = Array.from(new Set(expanded.filter(Boolean)));
 
       const targetWordEl = document.getElementById('practice-target-word');
       if (targetWordEl) targetWordEl.innerText = wordData.beseda;
@@ -2233,7 +2620,7 @@
 
       feedback.classList.remove('hidden');
       feedback.className = "p-3 rounded-md text-xs space-y-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400";
-      feedback.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-xs mr-1.5"></i> Preverjam...`;
+      feedback.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-xs mr-1.5"></i> ${t.practiceChecking || 'Preverjam...'}`;
 
       try {
         let bestResult = null;
@@ -2304,11 +2691,11 @@
               <span>${t.practiceAlmost || 'Skoraj pravilno — pazi na strešice (č, š, ž)!'}</span>
             </div>
             <div class="p-2 rounded bg-white/70 dark:bg-zinc-900/70 border border-amber-200/60 dark:border-amber-900/40 space-y-1">
-              <div class="text-[10px] uppercase font-semibold text-amber-800/70 dark:text-amber-300/70">Razlika v črkah:</div>
+              <div class="text-[10px] uppercase font-semibold text-amber-800/70 dark:text-amber-300/70">${t.practiceDiffTitle || 'Razlika v črkah:'}</div>
               <div class="flex items-center gap-0.5 flex-wrap text-xs">${charDiffHtml}</div>
             </div>
             <div class="flex items-center justify-between gap-2 pt-0.5 flex-wrap">
-              <span class="text-[11px] text-amber-900/80 dark:text-amber-200/80">Pravilna oblika s strešico: <strong class="font-semibold font-mono">${bestExpected}</strong></span>
+              <span class="text-[11px] text-amber-900/80 dark:text-amber-200/80">${t.practiceCorrectWithCaron || 'Pravilna oblika s strešico:'} <strong class="font-semibold font-mono">${bestExpected}</strong></span>
               <button onclick="playDirectText('${bestExpected}', this)" class="inline-flex items-center gap-1 px-2 py-0.5 rounded border border-amber-300 dark:border-amber-800 bg-white dark:bg-amber-900/60 text-[11px] text-amber-800 dark:text-amber-200 hover:bg-amber-50 dark:hover:bg-emerald-800 transition-colors">
                 <i class="fa-solid fa-volume-high text-[10px]"></i> ${t.practiceListen || 'Poslušaj'}
               </button>
@@ -2326,7 +2713,7 @@
               <span>${t.practiceWrong || 'Poskusi znova.'}</span>
             </div>
             <div class="flex items-center justify-between gap-2 pt-1 flex-wrap">
-              <span class="text-[11px] text-zinc-600 dark:text-zinc-400">Pravilna oblika je: <strong class="text-zinc-900 dark:text-zinc-100 font-mono">${bestExpected}</strong></span>
+              <span class="text-[11px] text-zinc-600 dark:text-zinc-400">${t.practiceCorrectIs || 'Pravilna oblika je:'} <strong class="text-zinc-900 dark:text-zinc-100 font-mono">${bestExpected}</strong></span>
               <button onclick="playDirectText('${bestExpected}', this)" class="inline-flex items-center gap-1 px-2 py-0.5 rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-[11px] text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors">
                 <i class="fa-solid fa-volume-high text-[10px]"></i> ${t.practiceListen || 'Poslušaj'}
               </button>
@@ -2337,7 +2724,7 @@
       } catch (err) {
         console.error(err);
         feedback.className = "p-3 rounded-md text-xs text-red-500 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900";
-        feedback.innerText = "Pri preverjanju je prišlo do napake.";
+        feedback.innerText = t.practiceError || "Pri preverjanju je prišlo do napake.";
       }
     }
 

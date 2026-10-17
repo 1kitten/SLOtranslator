@@ -1,133 +1,88 @@
-# QA Sweep & Vulnerability Report
+# Final QA Sweep, Root-Cause Remediation & Verification Report (`Dvojček`)
 
-**Application:** SloDvojina (Slovenian Language & Dual-Grammar Explorer)  
-**Date:** 2026-10-16  
-**Environment:** Node.js Express Backend (`http://localhost:3000`) & Tailwind HTML Frontend
-
----
-
-## 1. Automated Route Verification Summary
-
-| # | Route / Feature Tested | Target / Payload | Status |
-|---|---|---|---|
-| 1 | `GET /` | Root Landing Page & DOM elements | **PASS** |
-| 2 | `GET /shared/textUtils.js` | Shared client/server utility module | **PASS** |
-| 3 | `GET /shared/phonemic.js` | Phonemic transcription module | **PASS** |
-| 4 | `GET /api/analyze?q=pes&ui=sr` | Known irregular noun analysis & dvojina | **PASS** |
-| 5 | `GET /api/analyze?q=delovati&ui=en` | Verb conjugation (Sedanjik, Preteklik, Prihodnjik) | **PASS** |
-| 6 | `GET /api/analyze?q=Ja potujem v Ljubljano` | Sentence breakdown, translation & token chips | **PASS** |
-| 7 | `GET /api/analyze?q=hisa&ui=sr` | Diacritic soft auto-correction (`hisa` -> `hiša`) | **PASS** |
-| 8 | `GET /api/analyze?q=hsia&ui=sr` | Typo tolerance fuzzy suggestions (`hsia` -> `hiša`) | **PASS** |
-| 9 | `GET /api/analyze?q=` | Empty query validation (400 Bad Request) | **PASS** |
-| 10 | `POST /api/quiz/check` | Exact answer validation | **PASS** |
-| 11 | `POST /api/quiz/check` | Diacritic soft accept + granular diff | **PASS** |
-| 12 | `POST /api/quiz/check` | Empty body validation (400 Bad Request) | **PASS** |
-| 13 | `GET /api/tts?text=pes` | Neural TTS audio proxy | **PASS** |
-| 14 | `GET /api/audio?word=pes` | Audio metadata endpoint | **PASS** |
-| 15 | `GET /api/audio` | Missing parameter check (400 Bad Request) | **PASS** |
-| 16 | `GET /api/analyze?q=<script>` | XSS injection sanitization test | **PASS** |
+**Application:** Dvojček — Slovenska dvojina & prevajalnik  
+**Working Directory:** `E:\antigravity\Translator app`  
+**Date:** 2026-10-17  
+**Environment:** Node.js Express Backend & Tailwind CSS / Vanilla JS Frontend  
+**Automated E2E Suite:** `test/e2e.test.js` (`25/25 tests passing`, `5/5 suites passing`, `0 failures`)
 
 ---
 
-## 2. Discovered Issues & Edge Cases
+## 1. Executive Summary
 
-### Issue 1 (CRITICAL / HIGH): Uncaught TypeError in `analyzeWordDirectly` on Unindexed / Missing Token
-- **Severity:** High
-- **Route / Component:** `/api/analyze` -> Client `analyzeWordDirectly(word)` in `public/index.html`
-- **Repro Steps:**
-  1. Analyze any sentence (e.g., `"Danes je sončen dan"`).
-  2. Click on a token whose word/lemma is unindexed in the vocabulary (or yields `notFound: true`).
-  3. Notice `analyzeWordDirectly` unconditionally calls `renderWordUI(data)`.
-  4. `renderWordUI` tries to read `wordData.beseda` where `wordData` is undefined, throwing an uncaught TypeError.
-- **Error Snippet:**
-  ```javascript
-  // public/index.html:1897
-  TypeError: Cannot read properties of undefined (reading 'beseda')
-      at renderWordUI (public/index.html:1897:54)
-      at analyzeWordDirectly (public/index.html:1697:11)
-  ```
-- **Suspected File:** `public/index.html`
-
-### Issue 2 (MEDIUM): `currentAnalysis` Not Updated on Direct Token Inspection, Breaking Card Audio
-- **Severity:** Medium
-- **Route / Component:** `analyzeWordDirectly` & `playAudioTrack` in `public/index.html`
-- **Repro Steps:**
-  1. Translate a full sentence. Sentence audio controls are mounted.
-  2. Click a valid noun token (e.g. `pes`).
-  3. The noun table renders below the sentence, but `currentAnalysis` is never updated with the new noun payload.
-  4. Clicking the audio speaker on any declension card fails to play because `playAudioTrack` looks up tracks in the stale sentence analysis.
-- **Error Snippet:**
-  ```javascript
-  // public/index.html:2034
-  function playAudioTrack(trackKey, btnElement) {
-    if (!currentAnalysis || !currentAnalysis.audio || !currentAnalysis.audio[trackKey]) return;
-    // Early return because currentAnalysis.audio only has { normal, slow } from sentence
-  ```
-- **Suspected File:** `public/index.html`
-
-### Issue 3 (MEDIUM): Stale or Missing Diacritic / Typo Banners in `analyzeWordDirectly`
-- **Severity:** Medium
-- **Route / Component:** `analyzeWordDirectly` in `public/index.html`
-- **Repro Steps:**
-  1. Type an unaccented or misspelled word into the main search box (e.g. `ucenik`), revealing the diacritic banner.
-  2. Click a sentence token.
-  3. `analyzeWordDirectly` does not hide `correction-banner` or `did-you-mean-banner`, nor does it render them if the token needed diacritic correction.
-- **Error Snippet:**
-  ```javascript
-  // public/index.html:1690
-  document.getElementById('verb-results-container').classList.add('hidden');
-  document.getElementById('results-container').classList.add('hidden');
-  // Missing reset and synchronization of correction-banner & did-you-mean-banner
-  ```
-- **Suspected File:** `public/index.html`
-
-### Issue 4 (LOW): Dynamic Translation Labels Desync on Interface Language Toggle
-- **Severity:** Low
-- **Route / Component:** `switchLanguage` in `public/index.html`
-- **Repro Steps:**
-  1. Perform a query with language set to `sr`.
-  2. Toggle interface language to `en`.
-  3. Fixed template strings switch to English, but dynamic content labels inside active cards (`spol`, `pomen`, `vaja`) remain in Serbian until a new query is submitted.
-- **Error Snippet:**
-  ```javascript
-  // switchLanguage updates static elements by ID but does not trigger
-  // re-rendering of active currentAnalysis cards
-  ```
-- **Suspected File:** `public/index.html`
+A full codebase audit and multi-agent remediation pipeline (`R1`–`R4`) was executed across the **Dvojček** application (`public/index.html`, `verbConjugator.js`, `server.js`, `franService.js`, and `data/dictionary.json`). All discovered bugs were grouped into 4 root-cause clusters, resolved, adversarially reviewed across 10 UI languages, and verified via an automated end-to-end test suite (`test/e2e.test.js`).
 
 ---
 
-## 3. Root-Cause Clusters for Debug Agent Handoff
+## 2. Remediated Bug Clusters (Root Cause → Fix → Verification)
 
-- **Cluster A (Token Inspection & State Synchronization):**
-  - Encompasses Issues 1, 2, and 3.
-  - Root Cause: `analyzeWordDirectly` in `public/index.html` was implemented as a simplified fetch that bypassed `processInput`'s error handling, `currentAnalysis` assignment, notFound suggestions, and banner resetting.
-
+### Cluster 1 (Critical): Frontend Language-Switch Crash on Verbs & Incomplete Localization (`R1`)
+- **Affected File:** [`public/index.html`](file:///E:/antigravity/Translator%20app/public/index.html)
+- **Root Cause:**
+  1. In `selectLanguage(lang)`, a redundant rendering block after `applyLanguage(lang)` only branched on `if (currentAnalysis.isSentence)` and fell through to `renderWordUI(currentAnalysis)` even when `currentAnalysis.isVerb === true`. Because verb payloads contain `verbData` instead of `wordData`, calling `renderWordUI` threw `TypeError: Cannot read properties of undefined (reading 'beseda')`.
+  2. Switching languages only updated static DOM labels and did not re-fetch `/api/analyze?q=...&ui=<newLang>`, leaving `data.meaning` in the previous language.
+  3. The Verb UI (`#verb-results-container`), Practice feedback card, and IPA Phonemic Modal contained hardcoded Slovenian/English strings (`"Zvok"`, `"1. Present Tense (Sedanjik)"`, `"Razlika v črkah:"`, `"v SloDvojina"`).
+- **Implemented Fix:**
+  - Removed the broken duplicate render in `selectLanguage(lang)` and added async re-fetching of `/api/analyze` for the active query when switching languages, guarded by a request sequence counter to prevent race conditions on rapid language switches.
+  - Added 31 localization keys across all 10 supported languages (`sr`, `en`, `hr`, `bs`, `de`, `it`, `es`, `fr`, `ru`, `sl`) covering the Verb UI, Practice feedback, and IPA Phonemic Modal.
+  - Replaced hardcoded `"Zvok"` buttons in `renderVerbUI` with localized `t.naturalVoice` labels and updated the IPA modal footer from `"v SloDvojina"` to `"v Dvojčku"`.
+- **Verification:**
+  - `Cluster 1` suite in `test/e2e.test.js` (6/6 tests PASS) + `Acceptance Criterion 1` (PASS).
 
 ---
 
-## 4. Resolution & Evidence Log Citations
+### Cluster 2 (High): Verb Conjugator Accuracy, `-či` Verbs, Irregular Verbs & Hardcoded `"work"` Strings (`R2`)
+- **Affected Files:** [`verbConjugator.js`](file:///E:/antigravity/Translator%20app/verbConjugator.js), [`server.js`](file:///E:/antigravity/Translator%20app/server.js)
+- **Root Cause:**
+  1. `verbConjugator.js` had hardcoded English strings `"The two of us work"` / `"The two of us will work"` (`enDesc`) on every verb's `dvojinaSummary` in present and future tenses.
+  2. Verbs ending in `-či` (`reči`, `peči`, `teči`, `leči`, `vreči`) were detected by `isVerbInfinitive` but fell through to the generic `inf.slice(0, -2)` rule, producing invalid forms (`"jaz reem"`, `"midva sva rel"` instead of `"jaz rečem"`, `"midva sva rekla"`).
+  3. Common irregular verbs (`hoteti`, `vedeti`, `moči`, `jesti`, `dati`, `priti`, `vzeti`) were missing from `irregularVerbs` and conjugated with regular stems (`"jaz hotim"`, `"jaz vedim"`).
+- **Implemented Fix:**
+  - Removed all hardcoded `"work"` descriptions and introduced `verbDescriptions` across all 10 UI languages (`midva / medve`, `vidva / vedve`, `onadva / onidve` localized explanations), forwarding `userLang` from `server.js` into `conjugateVerb(slWord, userLang)`.
+  - Added full conjugation paradigms (including prefixed derivatives like `preteči`, `odreči`, `speči`, `izreči`, `pomoči`, `oditi`, `dobiti`) for `-či` verbs (`reči`, `peči`, `teči`, `leči`, `vreči`) and irregular verbs (`hoteti`, `vedeti`, `moči`, `jesti`, `dati`, `priti`, `vzeti`).
+- **Verification:**
+  - `Cluster 2` suite in `test/e2e.test.js` (5/5 tests PASS) + `Acceptance Criterion 2` (PASS).
 
-### Cluster A Resolution Status: RESOLVED & VERIFIED
+---
 
-#### Hypotheses Proven by Evidence:
-1. **Hypothesis A1 (CONFIRMED):** Unindexed or irregular words returned `{ notFound: true, wordData: undefined }`, causing `renderWordUI` to throw `TypeError: Cannot read properties of undefined (reading 'beseda')`.
-   - *Pre-fix Runtime Log Evidence:*  
-     `{"runId":"run1","hypothesisId":"A1","location":"repro.js:50","message":"Hypothesis A1 confirmed: TypeError accessing wordData.beseda","data":{"error":"Cannot read properties of undefined (reading 'beseda')"}}`
-2. **Hypothesis A2 (CONFIRMED):** In `analyzeWordDirectly`, `currentAnalysis` was never updated to the newly inspected word, causing `playAudioTrack` on noun cards to fail with an early return against stale sentence audio metadata.
-   - *Pre-fix Runtime Log Evidence:*  
-     `{"runId":"run1","hypothesisId":"A2","location":"repro.js:65","message":"Hypothesis A2: playAudioTrack checked against stale currentAnalysis","data":{"currentAnalysisType":"sentence","dvojinaAudioTrackExists":false}}`
-3. **Hypothesis A3 (CONFIRMED):** Stale banners from previous searches remained open and new suggestions/corrections were omitted in `analyzeWordDirectly`.
+### Cluster 3 (High): Sentence Token Lemmatization, Non-Inflecting POS Handling & Quiz Slash Variants (`R3`)
+- **Affected Files:** [`server.js`](file:///E:/antigravity/Translator%20app/server.js), [`franService.js`](file:///E:/antigravity/Translator%20app/franService.js), [`public/index.html`](file:///E:/antigravity/Translator%20app/public/index.html), [`data/dictionary.json`](file:///E:/antigravity/Translator%20app/data/dictionary.json)
+- **Root Cause:**
+  1. `resolveBaseLemma` in `server.js` only handled irregular nouns and `-o -> -a` feminine endings. Conjugated verbs in sentences (`želim`, `potujem`, `sem`, `je`, `grem`, `imam`) were left un-lemmatized, so clicking them in sentence breakdowns routed them to masculine noun declension (`"en želim, dva želima"`).
+  2. Non-inflecting words (`nekaj`, `danes`, `zelo`, `te`, `v`, `in`, `ampak`, `tudi`) defaulted to `partOfSpeech = "samostalnik"` in `franService.js` and generated nonsensical noun declension tables (`"en nekaj, dva nekaja"`).
+  3. Nouns with slash-separated dual forms (`dan` → `"dva dni / dneva"`, `oko` → `"dve očesi / očes"`) were compared against the literal slash string in `/api/quiz/check` and `setupPracticeCard`, rejecting valid single variants like `"dva dni"` or `"dva dneva"`.
+- **Implemented Fix:**
+  - Expanded `resolveBaseLemma` in `server.js` with a comprehensive Slovenian verb inflection map and algorithmic `-ujem`/`-uješ`/`-ujemo` → `-ovati` stem resolver, and routed single-word conjugated verb lookups directly to verb conjugation.
+  - Added non-inflecting POS classification (`zaimek`, `prislov`, `predlog`, `veznik`, `členek`, `medmet`) in `franService.js` (`KNOWN_NON_INFLECTING` + Fran.si SSKJ metadata parser) and suppressed fake noun declension tables for non-inflecting words in `server.js`.
+  - Updated both `setupPracticeCard` in `public/index.html` and `POST /api/quiz/check` in `server.js` to expand slash-separated dual forms into all valid individual variants (with and without numeral prefixes `dva`/`dve`).
+- **Verification:**
+  - `Cluster 3` suite in `test/e2e.test.js` (6/6 tests PASS) + `Acceptance Criteria 3 & 4` (PASS).
 
-#### Implemented Fix:
-- Updated `analyzeWordDirectly` to reset banners, catch `notFound` with actionable suggestions or status feedback without calling `renderWordUI`, sync diacritic soft-corrections, and assign `currentAnalysis = data`.
-- Updated `switchLanguage` to re-render the active `currentAnalysis` dynamically when the language changes.
+---
 
-#### Post-Fix Verification Evidence:
-- *Post-fix Runtime Log Evidence (Run ID `post-fix`):*  
-  `{"runId":"post-fix","hypothesisId":"A1","location":"verify.js:46","message":"Post-fix verification: unindexed word handled without TypeError","data":{"word":"lep","notFound":true,"hasSuggestions":true,"typeErrorOccurred":false}}`  
-  `{"runId":"post-fix","hypothesisId":"A2","location":"verify.js:68","message":"Post-fix verification: currentAnalysis updated and audio track available","data":{"word":"pes","currentAnalysisType":"word","dvojinaAudioAvailable":true,"audioUrl":"/api/tts?text=dva%20psa"}}`
+### Cluster 4 (Low): Dead Code Removal (`R3` / `R4`)
+- **Affected File:** `translator.js` (deleted)
+- **Root Cause:** Leftover 1-line minified bundle referencing non-existent chunk files (`./Translator.JEQ2lH0-.js`).
+- **Implemented Fix:** Removed `translator.js` from the repository root and verified zero references across all source files.
+- **Verification:**
+  - `Cluster 4` suite in `test/e2e.test.js` (2/2 tests PASS) + `Acceptance Criterion 5` (PASS).
 
-#### Clean-up Verification:
-- All `#region debug log` / `#endregion` blocks verified removed (0 matches).
-- Git diff verified clean.
+---
+
+## 3. Earlier Session Fixes (Cluster A: `analyzeWordDirectly` & `nekaj -> Amerikanec`)
+
+- **`analyzeWordDirectly` Null-Safety & State Sync:** Fixed `notFound` handling, synced `currentAnalysis` on token click so card audio plays accurately, and synchronized typo/diacritic banners.
+- **Franja.si Headword Validation (`nekaj` → `nešto`):** Added strict headword matching in `parseFranjaEntry` and `lookupFranLive` in `franService.js` so Slovenian words like `"nekaj"` are never mismatched to unrelated entries (`"Amerikanec"`) on Franja.si.
+
+---
+
+## 4. Automated E2E Test Matrix (`node --test test/e2e.test.js`)
+
+| Suite | Tests | Pass | Fail | Status |
+|---|---|---|---|---|
+| **Cluster 1:** Frontend Language-Switch & Localization (`R1`) | 6 | 6 | 0 | **PASS** |
+| **Cluster 2:** Verb Conjugator Accuracy & Dual Descriptions (`R2`) | 5 | 5 | 0 | **PASS** |
+| **Cluster 3:** Sentence Token Lemmatization, POS & Quiz Slash-Variants (`R3`) | 6 | 6 | 0 | **PASS** |
+| **Cluster 4:** Dead Code Removal (`translator.js`) | 2 | 2 | 0 | **PASS** |
+| **Formal Acceptance Criteria (`AC1`–`AC5`)** | 5 | 5 | 0 | **PASS** |
+| **Total** | **25** | **25** | **0** | **100% PASS** |

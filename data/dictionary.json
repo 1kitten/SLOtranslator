@@ -2473,7 +2473,8 @@
   {
     "slWord": "danes",
     "accent": "dánes",
-    "spol": null,
+    "spol": "Prislov",
+    "partOfSpeech": "prislov",
     "translations": {
       "sr": "danas"
     },
@@ -2484,7 +2485,8 @@
   {
     "slWord": "zelo",
     "accent": "zeló",
-    "spol": null,
+    "spol": "Prislov",
+    "partOfSpeech": "prislov",
     "translations": {
       "sr": "jako"
     },
@@ -2495,12 +2497,289 @@
   {
     "slWord": "nekaj",
     "accent": "nékaj",
-    "spol": null,
+    "spol": "Zaimek",
+    "partOfSpeech": "zaimek",
     "translations": {
       "sr": "nešto"
     },
     "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
     "franUrl": "https://fran.si/iskanje?View=1&Query=nekaj",
     "franjaUrl": "https://franja.si/iskanje?sl=sh&tl=sl&q=ne%C5%A1to"
+  },
+  {
+    "slWord": "reči",
+    "accent": "rêči",
+    "spol": null,
+    "translations": {},
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=re%C4%8Di",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=re%C4%8Di"
+  },
+  {
+    "slWord": "hoteti",
+    "accent": "hotéti",
+    "spol": null,
+    "translations": {},
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=hoteti",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=hoteti"
+  },
+  {
+    "slWord": "vedeti",
+    "accent": "védeti",
+    "spol": null,
+    "translations": {},
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=vedeti",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=vedeti"
+  },
+  {
+    "slWord": "teči",
+    "accent": "têči",
+    "spol": null,
+    "translations": {},
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=te%C4%8Di",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=te%C4%8Di"
+  },
+  {
+    "slWord": "pustiti",
+    "accent": "pustíti",
+    "spol": null,
+    "translations": {
+      "hr": "dati"
+    },
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=pustiti",
+    "franjaUrl": "https://franja.si/iskanje?sl=sh&tl=sl&q=dati"
+  },
+  {
+    "slWord": "peči",
+    "accent": "pêči",
+    "spol": null,
+    "translations": {},
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=pe%C4%8Di",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=pe%C4%8Di"
+  },
+  {
+    "slWord": "leči",
+    "accent": "léči",
+    "spol": null,
+    "translations": {},
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=le%C4%8Di",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=le%C4%8Di"
+  },
+  {
+    "slWord": "vreči",
+    "accent": "vréči",
+    "spol": null,
+    "translations": {},
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=vre%C4%8Di",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=vre%C4%8Di"
+  },
+  {
+    "slWord": "priti",
+    "accent": "príti",
+    "spol": null,
+    "translations": {},
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=priti",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=priti"
+  },
+  {
+    "slWord": "vzeti",
+    "accent": "vzéti",
+    "spol": null,
+    "translations": {},
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=vzeti",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=vzeti"
+  },
+  {
+    "slWord": "moči",
+    "accent": "môči",
+    "spol": null,
+    "translations": {},
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=mo%C4%8Di",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=mo%C4%8Di"
+  },
+  {
+    "slWord": "izreči",
+    "accent": "izrêči",
+    "spol": null,
+    "translations": {},
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=izre%C4%8Di",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=izre%C4%8Di"
+  },
+  {
+    "slWord": "speči",
+    "accent": "spêči",
+    "spol": null,
+    "translations": {},
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=spe%C4%8Di",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=spe%C4%8Di"
+  },
+  {
+    "slWord": "poteči",
+    "accent": "potêči",
+    "spol": null,
+    "translations": {},
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=pote%C4%8Di",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=pote%C4%8Di"
+  },
+  {
+    "slWord": "obleči",
+    "accent": "obléči",
+    "spol": null,
+    "translations": {},
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=oble%C4%8Di",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=oble%C4%8Di"
+  },
+  {
+    "slWord": "zavreči",
+    "accent": "zavréči",
+    "spol": null,
+    "translations": {},
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=zavre%C4%8Di",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=zavre%C4%8Di"
+  },
+  {
+    "slWord": "privleči",
+    "accent": "privléči",
+    "spol": null,
+    "translations": {},
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=privle%C4%8Di",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=privle%C4%8Di"
+  },
+  {
+    "slWord": "preteči",
+    "accent": "pretêči",
+    "spol": null,
+    "translations": {},
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=prete%C4%8Di",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=prete%C4%8Di"
+  },
+  {
+    "slWord": "sleči",
+    "accent": "sléči",
+    "spol": null,
+    "translations": {},
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=sle%C4%8Di",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=sle%C4%8Di"
+  },
+  {
+    "slWord": "dati",
+    "accent": "dáti",
+    "spol": null,
+    "partOfSpeech": "glagol",
+    "translations": {
+      "en": "to give",
+      "de": "geben",
+      "it": "dare",
+      "fr": "donner",
+      "es": "dar",
+      "ru": "дать",
+      "sr": "dati",
+      "hr": "dati",
+      "bs": "dati",
+      "sl": "dati"
+    },
+    "franUrl": "https://fran.si/iskanje?View=1&Query=dati",
+    "source": "Fran.si (SSKJ)",
+    "verified": true
+  },
+  {
+    "slWord": "želeti",
+    "accent": "želéti",
+    "spol": null,
+    "partOfSpeech": "glagol",
+    "translations": {},
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=%C5%BEeleti",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=%C5%BEeleti"
+  },
+  {
+    "slWord": "brez",
+    "accent": "brez",
+    "spol": "Predlog",
+    "partOfSpeech": "predlog",
+    "translations": {},
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=brez",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=brez"
+  },
+  {
+    "slWord": "kupovati",
+    "accent": "kupováti",
+    "spol": null,
+    "partOfSpeech": "glagol",
+    "translations": {},
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=kupovati",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=kupovati"
+  },
+  {
+    "slWord": "sem",
+    "accent": "sèm",
+    "spol": "Prislov",
+    "partOfSpeech": "prislov",
+    "translations": {},
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=sem",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=sem"
+  },
+  {
+    "slWord": "nasip",
+    "accent": "nasíp",
+    "spol": "Moški spol",
+    "partOfSpeech": "samostalnik",
+    "translations": {
+      "en": "dam"
+    },
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=nasip",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=dam"
+  },
+  {
+    "slWord": "ker",
+    "accent": "ker",
+    "spol": "Veznik",
+    "partOfSpeech": "veznik",
+    "translations": {},
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=ker",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=ker"
+  },
+  {
+    "slWord": "tudi",
+    "accent": "túdi",
+    "spol": "Členek",
+    "partOfSpeech": "členek",
+    "translations": {},
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=tudi",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=tudi"
+  },
+  {
+    "slWord": "vprašati",
+    "accent": "vprášati",
+    "spol": null,
+    "partOfSpeech": "glagol",
+    "translations": {},
+    "source": "Fran.si (SSKJ) / Franja.si (ZRC SAZU)",
+    "franUrl": "https://fran.si/iskanje?View=1&Query=vpra%C5%A1ati",
+    "franjaUrl": "https://franja.si/iskanje?sl=en&tl=sl&q=vpra%C5%A1ati"
   }
 ]
